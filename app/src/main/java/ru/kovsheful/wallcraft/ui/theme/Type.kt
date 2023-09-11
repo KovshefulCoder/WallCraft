@@ -17,6 +17,15 @@ val roboto = FontFamily(
 )
 
 val typography = Typography(
+    headlineMedium = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        color = TextColor,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
     titleLarge = TextStyle(
         fontFamily = roboto,
         fontWeight = FontWeight.Bold,
