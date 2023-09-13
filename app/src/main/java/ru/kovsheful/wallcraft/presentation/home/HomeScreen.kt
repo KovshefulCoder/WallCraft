@@ -53,6 +53,7 @@ import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.ui.theme.Background
 import ru.kovsheful.wallcraft.ui.theme.PrimaryColor
+import ru.kovsheful.wallcraft.ui.theme.SecondaryText
 import ru.kovsheful.wallcraft.ui.theme.TextColor
 import ru.kovsheful.wallcraft.ui.theme.TopBarColor
 import ru.kovsheful.wallcraft.ui.theme.typography
@@ -179,9 +180,7 @@ fun CategoryGridItem(
 }
 
 @Composable
-fun WallCraftTopBar(
-    title: String
-) {
+fun WallCraftTopBar(title: String) {
     val dropDownMenuExpanded = remember {
         mutableStateOf(false)
     }
@@ -207,6 +206,7 @@ fun WallCraftTopBar(
                 onDismissRequest = {
                     dropDownMenuExpanded.value = false
                 },
+                modifier = Modifier.background(SecondaryText),
                 offset = DpOffset(x = 10.dp, y = (-60).dp)
             ) {
                 DropdownMenuItem(
