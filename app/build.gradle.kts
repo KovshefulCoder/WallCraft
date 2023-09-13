@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -5,7 +7,10 @@ plugins {
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.ksp)
 }
-
+//val properties = Properties().apply {
+//    load(rootProject.file("local.properties").inputStream())
+//}
+//val apiKey = properties.getProperty("api.key", "default")
 android {
     namespace = "ru.kovsheful.wallcraft"
     compileSdk = 34
@@ -24,6 +29,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_KEY","\"${project.property("API_KEY")}\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -41,7 +49,9 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
     }
