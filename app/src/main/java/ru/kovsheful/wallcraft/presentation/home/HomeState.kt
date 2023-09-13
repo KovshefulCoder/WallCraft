@@ -1,5 +1,7 @@
 package ru.kovsheful.wallcraft.presentation.home
 
+import ru.kovsheful.wallcraft.domain.models.CollectionModel
+
 data class HomeState(
-    val a: String = ""
+   val collections: List<CollectionModel> = listOf()
 )

@@ -11,8 +11,8 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 
-val Background = Color(0xFF3B3D49)
-val PrimaryColor = Color(0xFF5F6478)
-val TopBarColor = Color(0xFF322FBB)
+val Background = Color(0xFF17171A)
+val PrimaryColor = Color(0xFF286EF1)
 val TextColor = Color(0xFFFFFFFF)
 val SecondaryText = Color(0xFF90949F)
+val DropDownMenuColor = Color(0xFF1E1E29)
