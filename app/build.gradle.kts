@@ -53,7 +53,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -80,32 +80,36 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    //Material
-    implementation(libs.material)
-
     //Dagger - Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.androidCompiler)
     implementation(libs.hilt.navigationCompose)
 
-    // CollectAsStateWithLifecycle
-    implementation(libs.lifecycleRuntimeCompose)
-
-    //Navigation compose
-    implementation(libs.navigationCompose)
+    // Retrofit
+    implementation(libs.remote.okhttp)
+    implementation(libs.remote.converterGson)
+    implementation(libs.remote.retrofit)
 
     //Room
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
+    //Navigation compose
+    implementation(libs.navigationCompose)
+
+    //Coil
+    implementation(libs.coil)
+
+    //Material
+    implementation(libs.material)
+
+    // CollectAsStateWithLifecycle
+    implementation(libs.lifecycleRuntimeCompose)
+
     //Activity EdgeToEdge
     implementation(libs.activityEdgeToEdge)
 
-    // Retrofit
-    implementation(libs.remote.okhttp)
-    implementation(libs.remote.converterGson)
-    implementation(libs.remote.retrofit)
 
 }
