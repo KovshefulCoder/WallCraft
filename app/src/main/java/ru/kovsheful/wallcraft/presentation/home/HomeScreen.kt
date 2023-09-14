@@ -1,6 +1,5 @@
 package ru.kovsheful.wallcraft.presentation.home
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,8 +24,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -46,7 +43,6 @@ import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.core.WallCraftTopBar
 import ru.kovsheful.wallcraft.domain.models.CollectionModel
 import ru.kovsheful.wallcraft.ui.theme.Background
-import ru.kovsheful.wallcraft.ui.theme.PrimaryColor
 import ru.kovsheful.wallcraft.ui.theme.SecondaryText
 import ru.kovsheful.wallcraft.ui.theme.TextColor
 import ru.kovsheful.wallcraft.ui.theme.typography
@@ -65,15 +61,15 @@ fun NavGraphBuilder.home() {
 internal fun MainScreen() {
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = HomeViewModelEvents.None)
+    val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.onEvent(HomeScreenEvents.OnLoadCollections)
     }
     LaunchedEffect(viewModelEvent) {
         when (val event = viewModelEvent) {
-            is HomeViewModelEvents.None -> {}
-            is HomeViewModelEvents.OnShowToast -> {
+            is SharedViewModelEvents.None -> {}
+            is SharedViewModelEvents.OnShowToast -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -81,12 +77,6 @@ internal fun MainScreen() {
     MainScreen(
         collections = state.collections
     )
-}
-
-@Preview
-@Composable
-fun PrevMainScreen() {
-    MainScreen()
 }
 
 @Composable
