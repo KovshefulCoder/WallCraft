@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.ConnectionTimedOut
+import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.domain.use_cases.GetListOfCollections
 import ru.kovsheful.wallcraft.domain.use_cases.GetTitleImageOfCollection
 import javax.inject.Inject
@@ -60,9 +61,4 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-}
-
-sealed class SharedViewModelEvents {
-    data object None: SharedViewModelEvents()
-    data class OnShowToast(val message: String): SharedViewModelEvents()
 }

@@ -1,6 +1,9 @@
 package ru.kovsheful.wallcraft.presentation.home
 
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +43,7 @@ import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.WallCraftTopBar
 import ru.kovsheful.wallcraft.domain.models.CollectionModel
 import ru.kovsheful.wallcraft.ui.theme.Background
@@ -48,17 +52,29 @@ import ru.kovsheful.wallcraft.ui.theme.TextColor
 import ru.kovsheful.wallcraft.ui.theme.typography
 
 
-fun NavGraphBuilder.home() {
+fun NavGraphBuilder.home(
+    onCollectionClicked: (String) -> Unit
+) {
     composable(
         route = Screens.Home.route,
+        enterTransition = {
+            fadeIn(animationSpec = tween(300))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(300))
+        }
     ) {
-        MainScreen()
+        MainScreen(
+            onCollectionClicked = onCollectionClicked
+        )
     }
 }
 
 
 @Composable
-internal fun MainScreen() {
+internal fun MainScreen(
+    onCollectionClicked: (String) -> Unit
+) {
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
@@ -75,13 +91,15 @@ internal fun MainScreen() {
         }
     }
     MainScreen(
-        collections = state.collections
+        collections = state.collections,
+        onCollectionClicked = onCollectionClicked
     )
 }
 
 @Composable
 private fun MainScreen(
-    collections: List<CollectionModel>
+    collections: List<CollectionModel>,
+    onCollectionClicked: (String) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -125,11 +143,15 @@ private fun MainScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                items(collections) { collection ->
+                items(collections, key = {collection ->
+                    collection.id
+                }) { collection ->
                     CategoryGridItem(
                         url = collection.imageUrl,
                         title = collection.title,
-                        onCategoryClicked = {}
+                        onCollectionClicked = {
+                            onCollectionClicked(collection.id)
+                        }
                     )
                 }
             }
@@ -141,13 +163,13 @@ private fun MainScreen(
 fun CategoryGridItem(
     url: String?,
     title: String,
-    onCategoryClicked: (Long) -> Unit
+    onCollectionClicked: () -> Unit
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .clickable { onCategoryClicked(0) } //TODO fix
+            .clickable { onCollectionClicked() }
     ) {
         AsyncImage(
             model = url ?: R.drawable.error_image,

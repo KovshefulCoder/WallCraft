@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.presentation.collectionImages.collectionImages
 import ru.kovsheful.wallcraft.presentation.home.home
 import ru.kovsheful.wallcraft.ui.theme.Background
 import ru.kovsheful.wallcraft.ui.theme.WallCraftCleanArchitectureTheme
@@ -39,6 +40,12 @@ fun WallCraftApp() {
         navController = navController,
         startDestination = Screens.Home.route
     ) {
-        home()
+        home(
+            onCollectionClicked = { id ->
+                navController.navigate(Screens.CollectionImages.route + "/$id") }
+        )
+        collectionImages(
+            navigateBack = { navController.popBackStack() }
+        )
     }
 }
