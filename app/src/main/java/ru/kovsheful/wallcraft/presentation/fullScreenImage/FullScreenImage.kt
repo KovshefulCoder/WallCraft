@@ -178,6 +178,7 @@ private fun FullScreenImage(
                     //Unable to fix that error with standard googling (and with not such standard too, even visited https://juejin.cn/post/7133399457945059335)
                     //Throws error in onError, but almost always manages afterwards to display image,
                     //so showing error picture doesn`t seems logic
+                    //UPDATE: Added issue on Coil GitHub: https://github.com/coil-kt/coil/issues/1864
                     isErrorLoading.value = true
                 }
                 Log.i("TEMP", "Error loading, ${error.result.throwable.message}")
