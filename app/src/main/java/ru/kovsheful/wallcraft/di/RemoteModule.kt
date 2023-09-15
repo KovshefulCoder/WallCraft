@@ -12,8 +12,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import ru.kovsheful.wallcraft.core.ApiKeyInterceptor
 import ru.kovsheful.wallcraft.data.remote.CollectionsAPI
+import ru.kovsheful.wallcraft.data.remote.ImageAPI
 import ru.kovsheful.wallcraft.data.repository.CollectionsRepositoryImpl
+import ru.kovsheful.wallcraft.data.repository.ImageRepositoryImpl
 import ru.kovsheful.wallcraft.domain.repository.CollectionsRepository
+import ru.kovsheful.wallcraft.domain.repository.ImageRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -36,7 +39,10 @@ object RemoteModule {
     }
 
     @Provides
-    fun providesCollectionsAPI(retrofit: Retrofit) = retrofit.create(CollectionsAPI::class.java)
+    fun providesCollectionsAPI(retrofit: Retrofit): CollectionsAPI = retrofit.create(CollectionsAPI::class.java)
+
+    @Provides
+    fun providesImageAPI(retrofit: Retrofit): ImageAPI = retrofit.create(ImageAPI::class.java)
 }
 
 @Module
@@ -46,4 +52,9 @@ interface RemoteBindModule {
     fun bindCollectionsRepositoryImpl_to_CollectionsRepository(
         impl: CollectionsRepositoryImpl
     ): CollectionsRepository
+
+    @Binds
+    fun bindImageRepositoryImpl_to_ImageRepository(
+        impl: ImageRepositoryImpl
+    ): ImageRepository
 }

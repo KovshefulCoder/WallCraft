@@ -1,6 +1,5 @@
 package ru.kovsheful.wallcraft.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,11 +11,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ru.kovsheful.wallcraft.core.ConnectionTimedOut
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
-import ru.kovsheful.wallcraft.core.UnknownHttpError
 import ru.kovsheful.wallcraft.domain.use_cases.GetListOfCollections
 import ru.kovsheful.wallcraft.domain.use_cases.GetTitleImageOfCollection
+import ru.kovsheful.wallcraft.presentation.collectionImages.CollectionImagesViewModel
+import ru.kovsheful.wallcraft.utils.catchSharedViewModelException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +35,7 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: HomeScreenEvents) {
         viewModelScope.launch {
-            when(event) {
+            when (event) {
                 is HomeScreenEvents.OnLoadCollections -> {
                     // Separated getting the list of collections and their title images cause:
                     // 1. They don`t have one, so this requires separate request
@@ -50,19 +49,17 @@ class HomeViewModel @Inject constructor(
                             }
                         }.awaitAll()
                         _state.value = _state.value.copy(collections = updatedCollections)
-                    } catch(e: ConnectionTimedOut) {
-                        Log.i(TAG, "OnLoadCollections ConnectionTimedOut exception: ${e.message}")
-                        _eventFlow.emit(SharedViewModelEvents.OnShowToast("Server error, use VPN and try again"))
-                    } catch (e: UnknownHttpError) {
-                        Log.i(TAG, "OnLoadCollections UnknownHttpError exception: ${e.message}")
-                        _eventFlow.emit(SharedViewModelEvents.OnShowToast("Interten error, use VPN and try again"))
-                    }
-                    catch(e: Exception) {
-                        Log.i(TAG, "OnLoadCollections exception: ${e.message}")
-                        _eventFlow.emit(SharedViewModelEvents.OnShowToast("Something went wrong, please, try again"))
+                    } catch (e: Exception) {
+                        viewModelScope.launch {
+                            catchSharedViewModelException(
+                                flow = _eventFlow,
+                                exception = e,
+                                tagForLog = CollectionImagesViewModel.TAG,
+                                eventName = "OnLoadCollections"
+                            )
+                        }
                     }
                 }
-
             }
         }
     }

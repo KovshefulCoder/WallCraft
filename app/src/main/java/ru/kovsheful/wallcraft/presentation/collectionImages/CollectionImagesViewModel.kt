@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.domain.use_cases.GetImagesOfCollection
+import ru.kovsheful.wallcraft.utils.catchSharedViewModelException
 import javax.inject.Inject
 
 
@@ -31,12 +32,23 @@ class CollectionImagesViewModel @Inject constructor(
 
     fun onEvent(event: CollectionImagesScreenEvents) {
         viewModelScope.launch {
-            when(event) {
+            when (event) {
                 is CollectionImagesScreenEvents.OnLoadImages -> {
-                    _state.update { curUpdate ->
-                        curUpdate.copy(
-                            images = getImagesOfCollection(event.id)
-                        )
+                    try {
+                        _state.update { curUpdate ->
+                            curUpdate.copy(
+                                images = getImagesOfCollection(event.id)
+                            )
+                        }
+                    } catch (exception: Exception) {
+                        viewModelScope.launch {
+                            catchSharedViewModelException(
+                                flow = _eventFlow,
+                                exception = exception,
+                                tagForLog = TAG,
+                                eventName = "OnLoadImages"
+                            )
+                        }
                     }
                 }
             }

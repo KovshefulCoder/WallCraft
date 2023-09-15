@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.presentation.collectionImages.collectionImages
+import ru.kovsheful.wallcraft.presentation.fullScreenImage.fullScreenImage
 import ru.kovsheful.wallcraft.presentation.home.home
 import ru.kovsheful.wallcraft.ui.theme.Background
 import ru.kovsheful.wallcraft.ui.theme.WallCraftCleanArchitectureTheme
@@ -42,10 +43,15 @@ fun WallCraftApp() {
     ) {
         home(
             onCollectionClicked = { id, encodedTitle ->
-                navController.navigate(Screens.CollectionImages.route + "/$id/$encodedTitle") }
+                navController.navigate(Screens.CollectionImages.route + "/$id/$encodedTitle")
+            }
         )
         collectionImages(
-            navigateBack = { navController.popBackStack() }
+            navigateBack = { navController.popBackStack() },
+            navigateToFullScreenImage = { imageID ->
+                navController.navigate(Screens.FullScreenImage.route + "/$imageID")
+            }
         )
+        fullScreenImage( navigateBack = { navController.popBackStack() } )
     }
 }

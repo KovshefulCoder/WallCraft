@@ -7,13 +7,13 @@ import ru.kovsheful.wallcraft.data.entities.results.GetListOfCollectionsResult
 
 interface CollectionsAPI {
 
-    @GET("collections/featured")
+    @GET("collections/featured?per_page=5")
     suspend fun getListOfCollections(): GetListOfCollectionsResult
 
     //Get only first image to use it as title. Separate function allows now to waste another pictures
     @GET("collections/{id}?per_page=1")
     suspend fun getCollectionTitleImageById(@Path("id")id: String): GetCollectionResult
 
-    @GET("collections/{id}")
+    @GET("collections/{id}?per_page=5")
     suspend fun getCollectionImages(@Path("id")id: String): GetCollectionResult
 }
