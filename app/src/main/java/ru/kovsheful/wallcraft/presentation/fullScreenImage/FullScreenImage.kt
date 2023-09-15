@@ -160,7 +160,7 @@ private fun FullScreenImage(
                 contentDescription = "Error",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(200.dp)
+                    .size(400.dp)
             )
         }
         AsyncImage(
@@ -172,14 +172,14 @@ private fun FullScreenImage(
             },
             onError = { error ->
                 isImageLoading.value = false
-                isErrorLoading.value = true
-//                //Was unable to fix that error with standard googling
-//                //Throes error in onError, but still often manages to display image
-//                if ((error.result.throwable.message?.trim() ?: "")
-//                    != "Unable to create a fetcher that supports:"
-//                ) {
-//                    isErrorLoading.value = true
-//                }
+                if ((error.result.throwable.message?.trim() ?: "")
+                    != "Unable to create a fetcher that supports:"
+                ) {
+                    //Unable to fix that error with standard googling (and with not such standard too, even visited https://juejin.cn/post/7133399457945059335)
+                    //Throws error in onError, but almost always manages afterwards to display image,
+                    //so showing error picture doesn`t seems logic
+                    isErrorLoading.value = true
+                }
                 Log.i("TEMP", "Error loading, ${error.result.throwable.message}")
             },
             onSuccess = {
