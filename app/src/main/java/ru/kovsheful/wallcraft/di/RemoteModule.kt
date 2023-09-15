@@ -41,7 +41,7 @@ object RemoteModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface RemoteMindModule {
+interface RemoteBindModule {
     @Binds
     fun bindCollectionsRepositoryImpl_to_CollectionsRepository(
         impl: CollectionsRepositoryImpl

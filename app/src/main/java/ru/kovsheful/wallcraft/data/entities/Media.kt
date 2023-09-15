@@ -1,6 +1,7 @@
 package ru.kovsheful.wallcraft.data.entities
 
 import com.google.gson.annotations.SerializedName
+import ru.kovsheful.wallcraft.domain.models.ImageModel
 
 data class Media(
     val alt: String,
@@ -18,4 +19,14 @@ data class Media(
     val type: String,
     val url: String,
     val width: Int
-)
+) {
+    fun toImageEntity() =
+        if (type != "Photo") {
+            null
+        } else {
+            ImageModel(
+                url = src.large,
+                id = id
+            )
+        }
+}
