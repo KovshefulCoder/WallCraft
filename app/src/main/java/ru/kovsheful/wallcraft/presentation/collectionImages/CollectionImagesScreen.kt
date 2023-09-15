@@ -43,7 +43,8 @@ const val COLLECTION_ID = "id"
 const val COLLECTION_ENCODED_TITLE = "title"
 
 fun NavGraphBuilder.collectionImages(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateTo
 ) {
     composable(
         route = Screens.CollectionImages.route + "/{$COLLECTION_ID}/{$COLLECTION_ENCODED_TITLE}",
