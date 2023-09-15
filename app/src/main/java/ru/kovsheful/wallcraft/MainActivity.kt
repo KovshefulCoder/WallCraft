@@ -41,8 +41,8 @@ fun WallCraftApp() {
         startDestination = Screens.Home.route
     ) {
         home(
-            onCollectionClicked = { id ->
-                navController.navigate(Screens.CollectionImages.route + "/$id") }
+            onCollectionClicked = { id, encodedTitle ->
+                navController.navigate(Screens.CollectionImages.route + "/$id/$encodedTitle") }
         )
         collectionImages(
             navigateBack = { navController.popBackStack() }

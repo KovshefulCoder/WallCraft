@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.ConnectionTimedOut
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.core.UnknownHttpError
 import ru.kovsheful.wallcraft.domain.use_cases.GetListOfCollections
 import ru.kovsheful.wallcraft.domain.use_cases.GetTitleImageOfCollection
 import javax.inject.Inject
@@ -50,9 +51,13 @@ class HomeViewModel @Inject constructor(
                         }.awaitAll()
                         _state.value = _state.value.copy(collections = updatedCollections)
                     } catch(e: ConnectionTimedOut) {
-                        Log.i(TAG, "OnLoadCollections exception: ${e.message}")
+                        Log.i(TAG, "OnLoadCollections ConnectionTimedOut exception: ${e.message}")
                         _eventFlow.emit(SharedViewModelEvents.OnShowToast("Server error, use VPN and try again"))
-                    } catch(e: Exception) {
+                    } catch (e: UnknownHttpError) {
+                        Log.i(TAG, "OnLoadCollections UnknownHttpError exception: ${e.message}")
+                        _eventFlow.emit(SharedViewModelEvents.OnShowToast("Interten error, use VPN and try again"))
+                    }
+                    catch(e: Exception) {
                         Log.i(TAG, "OnLoadCollections exception: ${e.message}")
                         _eventFlow.emit(SharedViewModelEvents.OnShowToast("Something went wrong, please, try again"))
                     }

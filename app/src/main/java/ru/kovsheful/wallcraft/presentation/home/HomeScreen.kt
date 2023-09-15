@@ -1,14 +1,15 @@
 package ru.kovsheful.wallcraft.presentation.home
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +23,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,16 +43,15 @@ import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
-import ru.kovsheful.wallcraft.core.WallCraftTopBar
+import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
 import ru.kovsheful.wallcraft.domain.models.CollectionModel
-import ru.kovsheful.wallcraft.ui.theme.Background
 import ru.kovsheful.wallcraft.ui.theme.SecondaryText
 import ru.kovsheful.wallcraft.ui.theme.TextColor
 import ru.kovsheful.wallcraft.ui.theme.typography
 
 
 fun NavGraphBuilder.home(
-    onCollectionClicked: (String) -> Unit
+    onCollectionClicked: (String, String) -> Unit
 ) {
     composable(
         route = Screens.Home.route,
@@ -73,7 +71,7 @@ fun NavGraphBuilder.home(
 
 @Composable
 internal fun MainScreen(
-    onCollectionClicked: (String) -> Unit
+    onCollectionClicked: (String, String) -> Unit
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -92,7 +90,12 @@ internal fun MainScreen(
     }
     MainScreen(
         collections = state.collections,
-        onCollectionClicked = onCollectionClicked
+        onCollectionClicked = { selectedID ->
+            val encodedCollectionTile = Uri.encode(state.collections.find { collection ->
+                collection.id == selectedID
+            }?.title ?: "none")
+            onCollectionClicked(selectedID, encodedCollectionTile)
+        }
     )
 }
 
@@ -101,59 +104,37 @@ private fun MainScreen(
     collections: List<CollectionModel>,
     onCollectionClicked: (String) -> Unit
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        backgroundColor = Background,
-        topBar = {
-            WallCraftTopBar(
-                title = stringResource(R.string.home_screen_title)
+    WallCraftScaffoldNColumn(
+        scaffoldTitle = stringResource(R.string.home_screen_title),
+        subtitle = stringResource(id = R.string.home_screen_subtitle)
+    )
+    {
+        if (collections == listOf<CollectionModel>()) {
+            CircularProgressIndicator(
+                color = TextColor,
+                modifier = Modifier
+                    .padding(vertical = 100.dp)
+                    .size(50.dp)
             )
         }
-    ) {
-        Column(
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Adaptive(minSize = 160.dp),
+            verticalItemSpacing = 4.dp,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
-                .padding(it)
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .weight(1f)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.home_screen_subtitle),
-                    style = typography.headlineMedium
+            items(collections, key = { collection ->
+                collection.id
+            }) { collection ->
+                CategoryGridItem(
+                    url = collection.imageUrl,
+                    title = collection.title,
+                    onCollectionClicked = {
+                        onCollectionClicked(collection.id)
+                    }
                 )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            if (collections == listOf<CollectionModel>()) {
-                CircularProgressIndicator(
-                    color = TextColor,
-                    modifier = Modifier.padding(vertical = 100.dp).size(50.dp)
-                )
-            }
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(minSize = 160.dp),
-                verticalItemSpacing = 4.dp,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                items(collections, key = {collection ->
-                    collection.id
-                }) { collection ->
-                    CategoryGridItem(
-                        url = collection.imageUrl,
-                        title = collection.title,
-                        onCollectionClicked = {
-                            onCollectionClicked(collection.id)
-                        }
-                    )
-                }
             }
         }
     }
