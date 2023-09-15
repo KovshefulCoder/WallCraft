@@ -84,7 +84,7 @@ internal fun MainScreen(
         when (val event = viewModelEvent) {
             is SharedViewModelEvents.None -> {}
             is SharedViewModelEvents.OnShowToast -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
             }
         }
     }

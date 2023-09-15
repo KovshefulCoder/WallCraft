@@ -2,6 +2,7 @@ package ru.kovsheful.wallcraft.presentation.collectionImages
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -22,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,6 +36,7 @@ import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
 import ru.kovsheful.wallcraft.domain.models.CollectionModel
 import ru.kovsheful.wallcraft.domain.models.ImageModel
@@ -100,6 +103,18 @@ internal fun CollectionImagesScreen(
         viewModel.onEvent(CollectionImagesScreenEvents.OnLoadImages(collectionID))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
+    val context = LocalContext.current
+    LaunchedEffect(viewModelEvent) {
+        when (val event = viewModelEvent) {
+            is SharedViewModelEvents.None -> {}
+            is SharedViewModelEvents.OnShowToast -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     CollectionImagesScreen(
         images = state.images,
         collectionTitle = collectionTitle,

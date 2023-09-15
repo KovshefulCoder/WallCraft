@@ -23,6 +23,6 @@ data class ImageEntity(
     fun toImageEntity() = ImageModel(
         id = id,
         url = src.medium,
-        highQualityUrl = src.original
+        highQualityUrl = src.large2x
     )
 }

@@ -33,6 +33,7 @@ import ru.kovsheful.wallcraft.ui.theme.Background
 import ru.kovsheful.wallcraft.ui.theme.DropDownMenuColor
 import ru.kovsheful.wallcraft.ui.theme.PrimaryColor
 import ru.kovsheful.wallcraft.ui.theme.SecondaryText
+import ru.kovsheful.wallcraft.ui.theme.TextColor
 import ru.kovsheful.wallcraft.ui.theme.typography
 
 
@@ -66,7 +67,7 @@ fun WallCraftScaffoldNColumn(
             ) {
                 Text(
                     text = subtitle,
-                    style = typography.headlineSmall
+                    style = typography.titleMedium
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -95,7 +96,8 @@ fun WallCraftTopBar(title: String) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_vertical_dots),
-                    contentDescription = "Dropdown menu"
+                    contentDescription = "Dropdown menu",
+                    tint = TextColor
                 )
             }
             // drop down menu

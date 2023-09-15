@@ -12,9 +12,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.domain.use_cases.GetHighQualityImage
-import ru.kovsheful.wallcraft.domain.use_cases.GetImagesOfCollection
-import ru.kovsheful.wallcraft.presentation.collectionImages.CollectionImagesScreenEvents
-import ru.kovsheful.wallcraft.presentation.collectionImages.CollectionImagesState
 import javax.inject.Inject
 
 
@@ -38,7 +35,7 @@ class FullScreenImageViewModel @Inject constructor(
                 is FullScreenImageEvent.OnLoadImageInHighQuality -> {
                     _state.update { curValue ->
                         curValue.copy(
-                            highQualityImgageUrl = getHighQualityImage(event.imageID)
+                            highQualityImageUrl = getHighQualityImage(event.imageID)
                         )
                     }
                 }

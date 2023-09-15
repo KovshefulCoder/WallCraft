@@ -38,7 +38,25 @@ val typography = Typography(
     titleLarge = TextStyle(
         fontFamily = roboto,
         fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        color = TextColor,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+    titleMedium = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
+        color = TextColor,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+    titleSmall = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
         color = TextColor,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
@@ -57,6 +75,15 @@ val typography = Typography(
         fontFamily = roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
+        color = TextColor,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+    labelLarge = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
         color = TextColor,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
