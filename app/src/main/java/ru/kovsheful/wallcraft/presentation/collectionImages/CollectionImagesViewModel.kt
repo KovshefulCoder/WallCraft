@@ -44,7 +44,9 @@ class CollectionImagesViewModel @Inject constructor(
                         viewModelScope.launch {
                             catchSharedViewModelException(
                                 flow = _eventFlow,
-                                exception = exception
+                                exception = exception,
+                                tagForLog = TAG,
+                                eventName = "OnLoadImages"
                             )
                         }
                     }

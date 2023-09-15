@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.domain.use_cases.GetListOfCollections
 import ru.kovsheful.wallcraft.domain.use_cases.GetTitleImageOfCollection
+import ru.kovsheful.wallcraft.presentation.collectionImages.CollectionImagesViewModel
 import ru.kovsheful.wallcraft.utils.catchSharedViewModelException
 import javax.inject.Inject
 
@@ -52,7 +53,9 @@ class HomeViewModel @Inject constructor(
                         viewModelScope.launch {
                             catchSharedViewModelException(
                                 flow = _eventFlow,
-                                exception = e
+                                exception = e,
+                                tagForLog = CollectionImagesViewModel.TAG,
+                                eventName = "OnLoadCollections"
                             )
                         }
                     }

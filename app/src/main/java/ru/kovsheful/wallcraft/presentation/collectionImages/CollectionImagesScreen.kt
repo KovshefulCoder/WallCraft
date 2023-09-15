@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +45,7 @@ const val COLLECTION_ENCODED_TITLE = "title"
 
 fun NavGraphBuilder.collectionImages(
     navigateBack: () -> Unit,
-    navigateTo
+    navigateToFullScreenImage: (Int) -> Unit
 ) {
     composable(
         route = Screens.CollectionImages.route + "/{$COLLECTION_ID}/{$COLLECTION_ENCODED_TITLE}",
@@ -69,7 +70,7 @@ fun NavGraphBuilder.collectionImages(
     ) { entry ->
         val collectionID = entry.arguments?.getString(COLLECTION_ID) ?: ""
         val collectionEncodedTitle = entry.arguments?.getString(COLLECTION_ENCODED_TITLE) ?: ""
-        if (collectionID.isEmpty() || collectionEncodedTitle.isEmpty()) {
+        if (collectionID.isEmpty() || collectionEncodedTitle.isEmpty() || collectionEncodedTitle == "none") {
             Log.i(
                 "collectionImagesScreen",
                 "Null on collection id or title in collectionImages composable"
@@ -81,7 +82,8 @@ fun NavGraphBuilder.collectionImages(
         }
         CollectionImagesScreen(
             collectionID = collectionID,
-            collectionTitle = Uri.decode(collectionEncodedTitle)
+            collectionTitle = Uri.decode(collectionEncodedTitle),
+            onImageClicked = navigateToFullScreenImage
         )
 
     }
@@ -90,7 +92,8 @@ fun NavGraphBuilder.collectionImages(
 @Composable
 internal fun CollectionImagesScreen(
     collectionID: String,
-    collectionTitle: String
+    collectionTitle: String,
+    onImageClicked: (Int) -> Unit
 ) {
     val viewModel: CollectionImagesViewModel = hiltViewModel()
     LaunchedEffect(Unit) {
@@ -99,14 +102,17 @@ internal fun CollectionImagesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     CollectionImagesScreen(
         images = state.images,
-        collectionTitle = collectionTitle
+        collectionTitle = collectionTitle,
+        onImageClicked = onImageClicked
+
     )
 }
 
 @Composable
 private fun CollectionImagesScreen(
     images: List<ImageModel>,
-    collectionTitle: String
+    collectionTitle: String,
+    onImageClicked: (Int) -> Unit
 ) {
     WallCraftScaffoldNColumn(
         scaffoldTitle = collectionTitle,
@@ -135,8 +141,12 @@ private fun CollectionImagesScreen(
                 AsyncImage(
                     model = image.url,
                     contentDescription = "Image",
-                    modifier = Modifier.fillMaxWidth()
-                        .wrapContentHeight(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .clickable {
+                            onImageClicked(image.id)
+                        },
                     contentScale = ContentScale.Crop
                 )
             }
