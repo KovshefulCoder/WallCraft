@@ -1,6 +1,5 @@
 package ru.kovsheful.wallcraft.core
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,13 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.recreate
 import ru.kovsheful.wallcraft.R
-import ru.kovsheful.wallcraft.ui.theme.Background
-import ru.kovsheful.wallcraft.ui.theme.DropDownMenuColor
-import ru.kovsheful.wallcraft.ui.theme.PrimaryColor
-import ru.kovsheful.wallcraft.ui.theme.SecondaryText
-import ru.kovsheful.wallcraft.ui.theme.TextColor
-import ru.kovsheful.wallcraft.ui.theme.typography
 
 
 @Composable
@@ -45,7 +40,7 @@ fun WallCraftScaffoldNColumn(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        backgroundColor = Background,
+        backgroundColor = MaterialTheme.colorScheme.background,
         topBar = {
             WallCraftTopBar(
                 title = scaffoldTitle
@@ -67,7 +62,8 @@ fun WallCraftScaffoldNColumn(
             ) {
                 Text(
                     text = subtitle,
-                    style = typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -86,10 +82,11 @@ fun WallCraftTopBar(title: String) {
         title = {
             Text(
                 text = title,
-                style = typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
             )
         },
-        backgroundColor = PrimaryColor,
+        backgroundColor = MaterialTheme.colorScheme.primary,
         actions = {
             IconButton(
                 onClick = { dropDownMenuExpanded.value = true }
@@ -97,7 +94,7 @@ fun WallCraftTopBar(title: String) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_vertical_dots),
                     contentDescription = "Dropdown menu",
-                    tint = TextColor
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
             // drop down menu
@@ -106,14 +103,15 @@ fun WallCraftTopBar(title: String) {
                 onDismissRequest = {
                     dropDownMenuExpanded.value = false
                 },
-                modifier = Modifier.background(DropDownMenuColor),
+                modifier = Modifier.background(MaterialTheme.colorScheme.secondary),
                 offset = DpOffset(x = 10.dp, y = (-60).dp)
             ) {
                 DropdownMenuItem(
                     text = {
                         Text(
                             text = stringResource(R.string.dropdown_menu_settings),
-                            style = typography.bodySmall
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     },
                     onClick = {
@@ -125,7 +123,8 @@ fun WallCraftTopBar(title: String) {
                     text = {
                         Text(
                             text = stringResource(R.string.dropdown_menu_favorite),
-                            style = typography.bodySmall
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     },
                     onClick = {
@@ -137,7 +136,8 @@ fun WallCraftTopBar(title: String) {
                     text = {
                         Text(
                             text = stringResource(R.string.dropdown_menu_downloads),
-                            style = typography.bodySmall
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     },
                     onClick = {

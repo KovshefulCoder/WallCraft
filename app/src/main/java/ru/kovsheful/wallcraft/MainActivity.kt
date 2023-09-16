@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,7 +15,6 @@ import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.presentation.collectionImages.collectionImages
 import ru.kovsheful.wallcraft.presentation.fullScreenImage.fullScreenImage
 import ru.kovsheful.wallcraft.presentation.home.home
-import ru.kovsheful.wallcraft.ui.theme.Background
 import ru.kovsheful.wallcraft.ui.theme.WallCraftCleanArchitectureTheme
 
 @AndroidEntryPoint
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
             WallCraftCleanArchitectureTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Background
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     WallCraftApp()
                 }

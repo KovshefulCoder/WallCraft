@@ -6,10 +6,8 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +16,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -38,10 +36,7 @@ import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
-import ru.kovsheful.wallcraft.domain.models.CollectionModel
 import ru.kovsheful.wallcraft.domain.models.ImageModel
-import ru.kovsheful.wallcraft.presentation.home.CategoryGridItem
-import ru.kovsheful.wallcraft.ui.theme.TextColor
 
 const val COLLECTION_ID = "id"
 const val COLLECTION_ENCODED_TITLE = "title"
@@ -136,7 +131,7 @@ private fun CollectionImagesScreen(
     {
         if (images == listOf<ImageModel>()) {
             CircularProgressIndicator(
-                color = TextColor,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(vertical = 100.dp)
                     .size(50.dp)

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,14 +57,8 @@ import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
-import ru.kovsheful.wallcraft.ui.theme.DropDownMenuColor
-import ru.kovsheful.wallcraft.ui.theme.SecondaryText
-import ru.kovsheful.wallcraft.ui.theme.TextColor
-import ru.kovsheful.wallcraft.ui.theme.typography
-
 
 const val IMAGE_ID = "id"
-
 
 fun NavGraphBuilder.fullScreenImage(
     navigateBack: () -> Unit,
@@ -149,7 +144,7 @@ private fun FullScreenImage(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    color = TextColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(50.dp)
                 )
             }
@@ -162,14 +157,15 @@ private fun FullScreenImage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CircularProgressIndicator(
-                    color = TextColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(50.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.full_screen_image_loading_placeholder_text),
                     textAlign = TextAlign.Center,
-                    style = typography.titleSmall,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -214,7 +210,7 @@ private fun FullScreenImage(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
                 .background(
-                    color = DropDownMenuColor,
+                    color = MaterialTheme.colorScheme.secondary,
                     shape = RoundedCornerShape(5.dp)
                 ),
             verticalAlignment = Alignment.CenterVertically,
@@ -275,7 +271,8 @@ fun ActionButton(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = title,
-                style = typography.labelLarge,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -292,13 +289,14 @@ fun WallpaperDropDownMenu(
     DropdownMenu(
         expanded = dropDownMenuStatus,
         onDismissRequest = onDropDownHide,
-        modifier = Modifier.background(DropDownMenuColor),
+        modifier = Modifier.background(MaterialTheme.colorScheme.secondary),
     ) {
         DropdownMenuItem(
             text = {
                 Text(
                     text = stringResource(R.string.dropdown_menu_wallpaper_all_screens),
-                    style = typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             },
             onClick = {
@@ -311,7 +309,8 @@ fun WallpaperDropDownMenu(
             text = {
                 Text(
                     text = stringResource(R.string.dropdown_menu_wallpaper_lock_screen),
-                    style = typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             },
             onClick = {
@@ -324,7 +323,8 @@ fun WallpaperDropDownMenu(
             text = {
                 Text(
                     text = stringResource(R.string.dropdown_menu_wallpaper_desktop),
-                    style = typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             },
             onClick = {

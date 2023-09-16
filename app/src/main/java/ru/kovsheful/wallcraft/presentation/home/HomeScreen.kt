@@ -7,14 +7,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -24,6 +20,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,9 +42,7 @@ import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
 import ru.kovsheful.wallcraft.domain.models.CollectionModel
-import ru.kovsheful.wallcraft.ui.theme.SecondaryText
-import ru.kovsheful.wallcraft.ui.theme.TextColor
-import ru.kovsheful.wallcraft.ui.theme.typography
+import ru.kovsheful.wallcraft.ui.theme.WallCraftCleanArchitectureTheme
 
 
 fun NavGraphBuilder.home(
@@ -111,7 +106,7 @@ private fun MainScreen(
     {
         if (collections == listOf<CollectionModel>()) {
             CircularProgressIndicator(
-                color = TextColor,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(vertical = 100.dp)
                     .size(50.dp)
@@ -163,16 +158,17 @@ fun CategoryGridItem(
         Box(
             modifier = Modifier
                 .background(
-                    color = SecondaryText.copy(alpha = 0.85f),
+                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.85f),
                     shape = RoundedCornerShape(5.dp)
                 ),
         ) {
             Text(
                 text = title,
                 modifier = Modifier.padding(vertical = 4.dp, horizontal = 32.dp),
-                style = typography.bodySmall.copy(
+                style = MaterialTheme.typography.bodySmall.copy(
                     fontWeight = FontWeight.Bold
                 ),
+                color = MaterialTheme.colorScheme.onSecondary,
                 overflow = TextOverflow.Ellipsis
             )
         }
