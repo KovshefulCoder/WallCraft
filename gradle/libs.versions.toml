@@ -23,6 +23,7 @@ activityEdgeToEdge_version = "1.8.0-beta01"
 retrofit_version = "2.9.0"
 okhttp_version = "4.11.0"
 coil_version = "2.4.0"
+documentfile = "1.0.1"
 
 
 [libraries]
@@ -56,6 +57,7 @@ remote-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version
 remote-converterGson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit_version" }
 remote-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp_version" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil_version"}
+androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 
 
 [plugins]
