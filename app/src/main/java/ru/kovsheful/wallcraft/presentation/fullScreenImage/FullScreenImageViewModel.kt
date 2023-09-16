@@ -48,7 +48,7 @@ class FullScreenImageViewModel @Inject constructor(
                         _state.update {
                             curValue -> curValue.copy( onLoading = true)
                         }
-                        setImageAsWallpaper(state.value.highQualityImageUrl)
+                        setImageAsWallpaper(state.value.highQualityImageUrl, event.wallpaperType)
                         _eventFlow.emit(SharedViewModelEvents.OnShowToast("Success"))
                     } catch (e: Exception) {
                         _eventFlow.emit(SharedViewModelEvents.OnShowToast(e.message ?: "Unknown error"))

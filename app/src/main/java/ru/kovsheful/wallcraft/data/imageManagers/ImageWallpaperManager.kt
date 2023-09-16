@@ -16,6 +16,7 @@ import ru.kovsheful.wallcraft.core.ErrorWhileSetWallpaper
 import ru.kovsheful.wallcraft.core.SmthWentWrongWhileSetWallpaper
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.io.InputStream
 import javax.inject.Inject
 
 class ImageWallpaperManager @Inject constructor(
@@ -25,7 +26,7 @@ class ImageWallpaperManager @Inject constructor(
     private val wallpaperManager = WallpaperManager.getInstance(context)
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    fun setImageAsWallpaper(imageUrl: String) {
+    fun setImageAsWallpaper(imageUrl: String, wallpaperType: Int = 0) {
         try {
             val request = DownloadManager.Request(imageUrl.toUri())
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
@@ -39,7 +40,17 @@ class ImageWallpaperManager @Inject constructor(
                         if (id == imageID) {
                             val downloadUri = downloadManager.getUriForDownloadedFile(id)
                             val inputStream = context.contentResolver.openInputStream(downloadUri)
-                            wallpaperManager.setStream(inputStream)
+                            when (wallpaperType) {
+                                0 -> wallpaperManager.setStream(inputStream)
+                                else -> {
+                                    wallpaperManager.setStream(
+                                        inputStream,
+                                        null,
+                                        true,
+                                        wallpaperType
+                                    )
+                                }
+                            }
                             val documentFile = DocumentFile.fromSingleUri(context, downloadUri);
                             if (documentFile != null && documentFile.exists()) {
                                 documentFile.delete();

@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SetImageAsWallpaper @Inject constructor(
     private val imageRepository: ImageRepository
 ) {
-    suspend operator fun invoke(url: String) {
-        return imageRepository.setImageAsWallpaper(url)
+    suspend operator fun invoke(url: String, wallpaperType: Int) {
+        return imageRepository.setImageAsWallpaper(url, wallpaperType)
     }
 }

@@ -1,5 +1,6 @@
 package ru.kovsheful.wallcraft.presentation.fullScreenImage
 
+import android.app.WallpaperManager
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -21,11 +22,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -216,11 +220,19 @@ private fun FullScreenImage(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+            val dropDownMenuExpanded = remember {
+                mutableStateOf(false)
+            }
             ActionButton(
                 title = stringResource(R.string.set_as_wallpaper_button_title),
                 icon = Icons.Default.Check,
                 iconColor = Color.Green,
-                onClick = { onEvent(FullScreenImageEvent.OnSetAsWallpaper) }
+                onClick = { dropDownMenuExpanded.value = true }
+            )
+            WallpaperDropDownMenu(
+                dropDownMenuStatus = dropDownMenuExpanded.value,
+                onDropDownHide = { dropDownMenuExpanded.value = false },
+                onEvent = onEvent
             )
             ActionButton(
                 title = stringResource(R.string.download_button_title),
@@ -271,8 +283,60 @@ fun ActionButton(
     }
 }
 
+@Composable
+fun WallpaperDropDownMenu(
+    dropDownMenuStatus: Boolean,
+    onDropDownHide: () -> Unit,
+    onEvent: (FullScreenImageEvent) -> Unit
+) {
+    DropdownMenu(
+        expanded = dropDownMenuStatus,
+        onDismissRequest = onDropDownHide,
+        modifier = Modifier.background(DropDownMenuColor),
+    ) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(R.string.dropdown_menu_wallpaper_all_screens),
+                    style = typography.bodySmall
+                )
+            },
+            onClick = {
+                onDropDownHide()
+                onEvent(FullScreenImageEvent.OnSetAsWallpaper())
+            }
+        )
+        Divider()
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(R.string.dropdown_menu_wallpaper_lock_screen),
+                    style = typography.bodySmall
+                )
+            },
+            onClick = {
+                onDropDownHide()
+                onEvent(FullScreenImageEvent.OnSetAsWallpaper(WallpaperManager.FLAG_LOCK))
+            }
+        )
+        Divider()
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(R.string.dropdown_menu_wallpaper_desktop),
+                    style = typography.bodySmall
+                )
+            },
+            onClick = {
+                onDropDownHide()
+                onEvent(FullScreenImageEvent.OnSetAsWallpaper(WallpaperManager.FLAG_SYSTEM))
+            }
+        )
+    }
+}
+
 sealed interface FullScreenImageEvent {
     data class OnLoadImageInHighQuality(val imageID: Int) : FullScreenImageEvent
-    data object OnSetAsWallpaper: FullScreenImageEvent
-    data object OnDownloadImage: FullScreenImageEvent
+    data class OnSetAsWallpaper(val wallpaperType: Int = 0) : FullScreenImageEvent
+    data object OnDownloadImage : FullScreenImageEvent
 }

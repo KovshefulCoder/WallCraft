@@ -25,9 +25,9 @@ class ImageRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun setImageAsWallpaper(imageUrl: String) {
+    override suspend fun setImageAsWallpaper(imageUrl: String, wallpaperType: Int) {
         withContext(Dispatchers.IO) {
-            imageWallpaperManager.setImageAsWallpaper(imageUrl)
+            imageWallpaperManager.setImageAsWallpaper(imageUrl, wallpaperType)
         }
     }
 }
