@@ -10,14 +10,18 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.kovsheful.wallcraft.core.ErrorWhileSetWallpaper
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.domain.use_cases.DownloadImageByUrl
 import ru.kovsheful.wallcraft.domain.use_cases.GetHighQualityImage
+import ru.kovsheful.wallcraft.domain.use_cases.SetImageAsWallpaper
 import javax.inject.Inject
 
 
 @HiltViewModel
 class FullScreenImageViewModel @Inject constructor(
-    private val getHighQualityImage: GetHighQualityImage
+    private val getHighQualityImage: GetHighQualityImage,
+    private val setImageAsWallpaper: SetImageAsWallpaper
 ) : ViewModel() {
     private val _state = MutableStateFlow(FullScreenImageState())
     val state = _state.asStateFlow()
@@ -39,6 +43,21 @@ class FullScreenImageViewModel @Inject constructor(
                         )
                     }
                 }
+                is FullScreenImageEvent.OnSetAsWallpaper -> {
+                    try {
+                        _state.update {
+                            curValue -> curValue.copy( onLoading = true)
+                        }
+                        setImageAsWallpaper(state.value.highQualityImageUrl)
+                        _eventFlow.emit(SharedViewModelEvents.OnShowToast("Success"))
+                    } catch (e: Exception) {
+                        _eventFlow.emit(SharedViewModelEvents.OnShowToast(e.message ?: "Unknown error"))
+                    } finally {
+                        _state.update { curValue -> curValue.copy( onLoading = false) }
+                    }
+
+                }
+                else -> {}
             }
         }
     }

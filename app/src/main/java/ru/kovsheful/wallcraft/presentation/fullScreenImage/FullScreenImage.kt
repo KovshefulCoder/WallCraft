@@ -117,15 +117,18 @@ internal fun FullScreenImage(
             }
         }
     }
-    FullScreenImage(imageUrl = state.highQualityImageUrl)
+    FullScreenImage(
+        imageUrl = state.highQualityImageUrl,
+        onLoadingInViewModel = state.onLoading,
+        onEvent = viewModel::onEvent
+    )
 }
 
 @Composable
 private fun FullScreenImage(
     imageUrl: String,
-    onSetAsWallpaper: () -> Unit = {},
-    onDownload: () -> Unit = {},
-    onAssToFavorite: () -> Unit = {}
+    onLoadingInViewModel: Boolean,
+    onEvent: (FullScreenImageEvent) -> Unit
 ) {
     val isImageLoading = remember { mutableStateOf(false) }
     val isErrorLoading = remember { mutableStateOf(false) }
@@ -134,6 +137,19 @@ private fun FullScreenImage(
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        if (onLoadingInViewModel) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = TextColor,
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+        }
         if (isImageLoading.value) {
             Column(
                 modifier = Modifier
@@ -204,19 +220,19 @@ private fun FullScreenImage(
                 title = stringResource(R.string.set_as_wallpaper_button_title),
                 icon = Icons.Default.Check,
                 iconColor = Color.Green,
-                onClick = onSetAsWallpaper
+                onClick = { onEvent(FullScreenImageEvent.OnSetAsWallpaper) }
             )
             ActionButton(
                 title = stringResource(R.string.download_button_title),
                 icon = ImageVector.vectorResource(R.drawable.ic_download),
                 iconColor = Color.White,
-                onClick = onDownload
+                onClick = { onEvent(FullScreenImageEvent.OnDownloadImage) }
             )
             ActionButton(
                 title = stringResource(R.string.add_to_favorite_button_title),
                 icon = Icons.Default.Favorite,
                 iconColor = Color.Red,
-                onClick = onAssToFavorite
+                onClick = {}
             )
 
         }
@@ -257,4 +273,6 @@ fun ActionButton(
 
 sealed interface FullScreenImageEvent {
     data class OnLoadImageInHighQuality(val imageID: Int) : FullScreenImageEvent
+    data object OnSetAsWallpaper: FullScreenImageEvent
+    data object OnDownloadImage: FullScreenImageEvent
 }
