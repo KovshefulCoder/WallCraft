@@ -1,6 +1,7 @@
 package ru.kovsheful.wallcraft
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,8 @@ import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.presentation.collectionImages.collectionImages
 import ru.kovsheful.wallcraft.presentation.fullScreenImage.fullScreenImage
 import ru.kovsheful.wallcraft.presentation.home.home
+import ru.kovsheful.wallcraft.presentation.settings.navigateToSetting
+import ru.kovsheful.wallcraft.presentation.settings.settings
 import ru.kovsheful.wallcraft.ui.theme.WallCraftCleanArchitectureTheme
 
 @AndroidEntryPoint
@@ -44,14 +47,23 @@ fun WallCraftApp() {
         home(
             onCollectionClicked = { id, encodedTitle ->
                 navController.navigate(Screens.CollectionImages.route + "/$id/$encodedTitle")
-            }
+            },
+            onSettings = { navController.navigateToSetting() },
+            onDownloads = {},
+            onFavorite = {},
         )
         collectionImages(
             navigateBack = { navController.popBackStack() },
             navigateToFullScreenImage = { imageID ->
                 navController.navigate(Screens.FullScreenImage.route + "/$imageID")
-            }
+            },
+            onSettings = { navController.navigateToSetting() },
+            onDownloads = {},
+            onFavorite = {},
         )
         fullScreenImage( navigateBack = { navController.popBackStack() } )
+        settings( navigateBack = {
+            navController.popBackStack()
+        } )
     }
 }

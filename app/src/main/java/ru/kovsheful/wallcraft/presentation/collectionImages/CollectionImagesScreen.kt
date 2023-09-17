@@ -37,6 +37,7 @@ import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.core.TopBarEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
 import ru.kovsheful.wallcraft.domain.models.ImageModel
 
@@ -45,7 +46,10 @@ const val COLLECTION_ENCODED_TITLE = "title"
 
 fun NavGraphBuilder.collectionImages(
     navigateBack: () -> Unit,
-    navigateToFullScreenImage: (Int) -> Unit
+    navigateToFullScreenImage: (Int) -> Unit,
+    onSettings: () -> Unit,
+    onFavorite: () -> Unit,
+    onDownloads: () -> Unit
 ) {
     composable(
         route = Screens.CollectionImages.route + "/{$COLLECTION_ID}/{$COLLECTION_ENCODED_TITLE}",
@@ -84,6 +88,14 @@ fun NavGraphBuilder.collectionImages(
             collectionID = collectionID,
             collectionTitle = Uri.decode(collectionEncodedTitle),
             onImageClicked = navigateToFullScreenImage,
+            onTopBarEvent = { topBarEvent ->
+                when (topBarEvent) {
+                    TopBarEvents.OnSettings -> onSettings()
+                    TopBarEvents.OnFavorite -> onFavorite()
+                    TopBarEvents.OnDownloads -> onDownloads()
+                    else -> navigateBack()
+                }
+            },
             navEntry = navEntry
         )
 
@@ -95,6 +107,7 @@ internal fun CollectionImagesScreen(
     collectionID: String,
     collectionTitle: String,
     onImageClicked: (Int) -> Unit,
+    onTopBarEvent: (TopBarEvents) -> Unit,
     navEntry: NavBackStackEntry
 ) {
     val viewModel: CollectionImagesViewModel = hiltViewModel(navEntry)
@@ -109,7 +122,8 @@ internal fun CollectionImagesScreen(
     CollectionImagesScreen(
         images = state.images,
         collectionTitle = collectionTitle,
-        onImageClicked = onImageClicked
+        onImageClicked = onImageClicked,
+        onTopBarEvent = onTopBarEvent
 
     )
 }
@@ -118,11 +132,13 @@ internal fun CollectionImagesScreen(
 private fun CollectionImagesScreen(
     images: List<ImageModel>,
     collectionTitle: String,
-    onImageClicked: (Int) -> Unit
-) {
+    onImageClicked: (Int) -> Unit,
+    onTopBarEvent: (TopBarEvents) -> Unit,
+    ) {
     WallCraftScaffoldNColumn(
         scaffoldTitle = collectionTitle,
-        subtitle = stringResource(id = R.string.collection_images_screen_subtitle)
+        subtitle = stringResource(id = R.string.collection_images_screen_subtitle),
+        onTopBarEvent = onTopBarEvent
     )
     {
         if (images == listOf<ImageModel>()) {

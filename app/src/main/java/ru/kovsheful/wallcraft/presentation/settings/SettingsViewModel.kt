@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import javax.inject.Inject
@@ -26,10 +27,19 @@ class SettingsViewModel @Inject constructor(
         const val TAG = "SettingsViewModel"
     }
 
-    fun onEvent(event:) {
+    fun onEvent(event: SettingsScreenEvent) {
         viewModelScope.launch {
             when (event) {
+                is SettingsScreenEvent.OnLoadSettings -> {
 
+                }
+                is SettingsScreenEvent.OnUpdateTheme -> {
+                    _state.update { curValue ->
+                        curValue.copy(
+                            isDarkTheme = event.isDarkTheme
+                        )
+                    }
+                }
             }
         }
     }

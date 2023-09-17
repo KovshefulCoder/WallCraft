@@ -42,13 +42,17 @@ import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.core.TopBarEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
 import ru.kovsheful.wallcraft.domain.models.CollectionModel
 import ru.kovsheful.wallcraft.ui.theme.WallCraftCleanArchitectureTheme
 
 
 fun NavGraphBuilder.home(
-    onCollectionClicked: (String, String) -> Unit
+    onCollectionClicked: (String, String) -> Unit,
+    onSettings: () -> Unit,
+    onFavorite: () -> Unit,
+    onDownloads: () -> Unit
 ) {
     composable(
         route = Screens.Home.route,
@@ -58,9 +62,17 @@ fun NavGraphBuilder.home(
         exitTransition = {
             fadeOut(animationSpec = tween(300))
         }
-    ) {navEntry ->
+    ) { navEntry ->
         MainScreen(
             onCollectionClicked = onCollectionClicked,
+            onTopBarEvent = { topBarEvent ->
+                when (topBarEvent) {
+                    TopBarEvents.OnSettings -> onSettings()
+                    TopBarEvents.OnFavorite -> onFavorite()
+                    TopBarEvents.OnDownloads -> onDownloads()
+                    else -> {}
+                }
+            },
             navEntry = navEntry
         )
     }
@@ -70,7 +82,8 @@ fun NavGraphBuilder.home(
 @Composable
 internal fun MainScreen(
     onCollectionClicked: (String, String) -> Unit,
-    navEntry: NavBackStackEntry
+    onTopBarEvent: (TopBarEvents) -> Unit,
+    navEntry: NavBackStackEntry,
 ) {
     val viewModel: HomeViewModel = hiltViewModel(navEntry)
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -86,18 +99,22 @@ internal fun MainScreen(
                 collection.id == selectedID
             }?.title ?: "none")
             onCollectionClicked(selectedID, encodedCollectionTile)
-        }
+        },
+        onTopBarEvent = onTopBarEvent
     )
 }
 
 @Composable
 private fun MainScreen(
     collections: List<CollectionModel>,
-    onCollectionClicked: (String) -> Unit
-) {
+    onCollectionClicked: (String) -> Unit,
+    onTopBarEvent: (TopBarEvents) -> Unit,
+
+    ) {
     WallCraftScaffoldNColumn(
         scaffoldTitle = stringResource(R.string.home_screen_title),
-        subtitle = stringResource(id = R.string.home_screen_subtitle)
+        subtitle = stringResource(id = R.string.home_screen_subtitle),
+        onTopBarEvent = onTopBarEvent
     )
     {
         if (collections == listOf<CollectionModel>()) {
