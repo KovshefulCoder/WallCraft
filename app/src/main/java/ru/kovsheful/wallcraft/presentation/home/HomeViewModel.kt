@@ -1,5 +1,6 @@
 package ru.kovsheful.wallcraft.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,8 +11,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.core.TooManyRequests
 import ru.kovsheful.wallcraft.domain.use_cases.GetListOfCollections
 import ru.kovsheful.wallcraft.domain.use_cases.GetTitleImageOfCollection
 import ru.kovsheful.wallcraft.presentation.collectionImages.CollectionImagesViewModel
@@ -45,9 +48,20 @@ class HomeViewModel @Inject constructor(
                         val collections = getCollectionsList()
                         val updatedCollections = collections.map { collection ->
                             async {
-                                collection.copy(imageUrl = getTitleImageOfCollection(collection.id))
+                                try {
+                                    collection.copy(imageUrl = getTitleImageOfCollection(collection.id))
+                                } catch (e: TooManyRequests) {
+                                    if (!state.value.isErrorShowed) {
+                                        _state.update { curValue ->
+                                            curValue.copy(isErrorShowed = true)
+                                        }
+                                        _eventFlow.emit(SharedViewModelEvents.OnShowToast(
+                                            "Too many requests, try out an hour later"))
+                                    }
+                                   null
+                                }
                             }
-                        }.awaitAll()
+                        }.awaitAll().filterNotNull()
                         _state.value = _state.value.copy(collections = updatedCollections)
                     } catch (e: Exception) {
                         viewModelScope.launch {
@@ -57,6 +71,10 @@ class HomeViewModel @Inject constructor(
                                 tagForLog = CollectionImagesViewModel.TAG,
                                 eventName = "OnLoadCollections"
                             )
+                        }
+                    } finally {
+                        _state.update { curValue ->
+                            curValue.copy(isErrorShowed = false)
                         }
                     }
                 }

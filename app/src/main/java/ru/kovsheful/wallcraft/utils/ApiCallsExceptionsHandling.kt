@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import retrofit2.HttpException
 import ru.kovsheful.wallcraft.core.ConnectionTimedOut
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.core.TooManyRequests
 import ru.kovsheful.wallcraft.core.UnknownHttpError
 import ru.kovsheful.wallcraft.presentation.home.HomeViewModel
 
@@ -14,6 +15,7 @@ suspend fun <T> apiCall(call: suspend () -> T): T {
     } catch (e: HttpException) {
         when (e.code()) {
             522 -> throw ConnectionTimedOut("522")
+            429 -> throw TooManyRequests("429")
             else -> throw UnknownHttpError(e.code().toString())
         }
     } catch (e: Exception) {
@@ -35,7 +37,11 @@ suspend fun catchSharedViewModelException(
         }
         is UnknownHttpError -> {
             Log.i(tagForLog, "$eventName UnknownHttpError exception: ${exception.message}")
-            flow.emit(SharedViewModelEvents.OnShowToast("Interten error, use VPN and try again"))
+            flow.emit(SharedViewModelEvents.OnShowToast("Internet error, use VPN and try again"))
+        }
+        is TooManyRequests -> {
+            Log.i(tagForLog, "$eventName TooManyRequests exception: ${exception.message}")
+            flow.emit(SharedViewModelEvents.OnShowToast("Too many requests, try out in an hour later"))
         }
         else -> {
             Log.i(tagForLog, "$eventName exception: ${exception.message}")
