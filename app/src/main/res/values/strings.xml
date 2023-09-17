@@ -16,7 +16,6 @@
     <string name="dropdown_menu_wallpaper_desktop">Desktop</string>
     <string name="settings_screen_title">Settings</string>
     <string name="setting_theme_title">App theme</string>
-    <string name="setting_theme_description">Caution! Changing the theme will cause the app to relaunch.</string>
 
     <string name="settings_n_collections_title">Number of collections</string>
     <string name="settings_api_beware_desctiption">Beware! Current photo API has only 200 requests per hour</string>

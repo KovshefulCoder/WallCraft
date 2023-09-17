@@ -227,7 +227,7 @@ private fun FullScreenImage(
             ActionButton(
                 title = stringResource(R.string.download_button_title),
                 icon = ImageVector.vectorResource(R.drawable.ic_download),
-                iconColor = Color.White,
+                iconColor = MaterialTheme.colorScheme.onBackground,
                 onClick = { onEvent(FullScreenImageEvent.OnDownloadImage) }
             )
             ActionButton(

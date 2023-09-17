@@ -12,9 +12,9 @@ class SettingsManager @Inject constructor(
 ) {
     fun getTheme() = sharedPref.getBoolean(THEME, true)
 
-    fun getNumberOfCollections() = sharedPref.getInt(NUMBER_OF_COLLECTIONS, 15)
+    fun getNumberOfCollections() = sharedPref.getInt(NUMBER_OF_COLLECTIONS, 5)
 
-    fun getNumberImagesInCollection() = sharedPref.getInt(NUMBER_OF_IMAGES, 15)
+    fun getNumberImagesInCollection() = sharedPref.getInt(NUMBER_OF_IMAGES, 5)
 
 
     fun updateTheme(isDarkTheme: Boolean) {

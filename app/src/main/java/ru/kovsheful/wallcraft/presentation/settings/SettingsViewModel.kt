@@ -1,7 +1,5 @@
 package ru.kovsheful.wallcraft.presentation.settings
 
-import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -79,7 +77,7 @@ class SettingsViewModel @Inject constructor(
                 }
                 is SettingsScreenEvent.OnNImagesInCollectionChangeFinished -> {
                     updateAppSettings(
-                        SettingsType.NumberOfCollections(state.value.imagesInCollection)
+                        SettingsType.ImagesInCollection(state.value.imagesInCollection)
                     )
                 }
             }

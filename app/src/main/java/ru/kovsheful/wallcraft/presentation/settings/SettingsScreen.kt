@@ -124,8 +124,7 @@ private fun SettingsScreen(
     ) {
         SettingsItem(
             title = stringResource(id = R.string.setting_theme_title),
-            description = stringResource(id = R.string.setting_theme_description),
-            descriptionColor = MaterialTheme.colorScheme.error,
+            description = null
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -157,11 +156,10 @@ private fun SettingsScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         SliderSettingsItem(
             title = stringResource(id = R.string.settings_n_collections_title),
             description = stringResource(id = R.string.settings_api_beware_desctiption),
-            descriptionColor = MaterialTheme.colorScheme.onSecondary,
             sliderValue = numberOfCollections,
             onSliderChange = { newValue ->
                 onEvent(SettingsScreenEvent.OnUpdateNCollections(newValue.toInt()))
@@ -170,12 +168,11 @@ private fun SettingsScreen(
                 onEvent(SettingsScreenEvent.OnNCollectionsChangeFinished)
             }
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         SliderSettingsItem(
             title = stringResource(id = R.string.settings_n_images_in_collection_title),
             description = stringResource(id = R.string.settings_api_beware_desctiption) +
                           stringResource(id = R.string.settings_n_images_in_collection_description),
-            descriptionColor = MaterialTheme.colorScheme.onSecondary,
             sliderValue = imagesInCollection,
             onSliderChange = { newValue ->
                 onEvent(SettingsScreenEvent.OnUpdateNImagesInCollection(newValue.toInt()))
@@ -191,7 +188,6 @@ private fun SettingsScreen(
 fun SliderSettingsItem(
     title: String,
     description: String,
-    descriptionColor: Color,
     sliderValue: Int,
     onSliderChange: (Float) -> Unit,
     onFinishChange: () -> Unit
@@ -199,8 +195,20 @@ fun SliderSettingsItem(
     SettingsItem(
         title = title,
         description = description,
-        descriptionColor = descriptionColor,
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = sliderValue.toString(),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Spacer(modifier = Modifier.height(2.dp))
         Slider(
             value = sliderValue.toFloat(),
             onValueChange = onSliderChange,
@@ -219,8 +227,7 @@ fun SliderSettingsItem(
 @Composable
 fun SettingsItem(
     title: String,
-    description: String,
-    descriptionColor: Color,
+    description: String?,
     modifier: Modifier = Modifier,
     content: @Composable (() -> Unit)
 ) {
@@ -236,14 +243,16 @@ fun SettingsItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodySmall,
-            color = descriptionColor,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
+        if (description != null) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSecondary,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
         Spacer(modifier = Modifier.height(4.dp))
         content()
     }
