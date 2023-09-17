@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">WallCraft Clean Architecture</string>
+    <string name="home_screen_title">Collections</string>
+    <string name="home_screen_subtitle">Choose collection of images</string>
+    <string name="collection_images_screen_subtitle">Choose image</string>
+    <string name="dropdown_menu_settings">Settings</string>
+    <string name="dropdown_menu_favorite">Favorite</string>
+    <string name="dropdown_menu_downloads">Downloads</string>
+    <string name="categories_loading_status_title">Loading…</string>
+    <string name="full_screen_image_loading_placeholder_text">Please wait.\nLoading image in highest quality\nIt can take some time :(</string>
+    <string name="set_as_wallpaper_button_title">Set as wallpaper</string>
+    <string name="download_button_title">Download</string>
+    <string name="add_to_favorite_button_title">Add to favorite</string>
+    <string name="dropdown_menu_wallpaper_all_screens">Both screens</string>
+    <string name="dropdown_menu_wallpaper_lock_screen">Lock screen</string>
+    <string name="dropdown_menu_wallpaper_desktop">Desktop</string>
+    <string name="settings_screen_title">Settings</string>
+    <string name="setting_theme_title">App theme</string>
+
+    <string name="settings_n_collections_title">Number of collections</string>
+    <string name="settings_api_beware_desctiption">Beware! Current photo API has only 200 requests per hour</string>
+
+    <string name="settings_n_images_in_collection_title">Number of images in collection</string>
+    <string name="settings_n_images_in_collection_description">\nSometimes there can be less photos</string>
 </resources>

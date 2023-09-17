@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -5,7 +7,10 @@ plugins {
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.ksp)
 }
-
+//val properties = Properties().apply {
+//    load(rootProject.file("local.properties").inputStream())
+//}
+//val apiKey = properties.getProperty("api.key", "default")
 android {
     namespace = "ru.kovsheful.wallcraft"
     compileSdk = 34
@@ -24,6 +29,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_KEY","\"${project.property("API_KEY")}\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -41,9 +49,11 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -62,6 +72,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.androidx.documentfile)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -70,32 +81,36 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    //Material
-    implementation(libs.material)
-
     //Dagger - Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.androidCompiler)
     implementation(libs.hilt.navigationCompose)
 
-    // CollectAsStateWithLifecycle
-    implementation(libs.lifecycleRuntimeCompose)
-
-    //Navigation compose
-    implementation(libs.navigationCompose)
+    // Retrofit
+    implementation(libs.remote.okhttp)
+    implementation(libs.remote.converterGson)
+    implementation(libs.remote.retrofit)
 
     //Room
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
+    //Navigation compose
+    implementation(libs.navigationCompose)
+
+    //Coil
+    implementation(libs.coil)
+
+    //Material
+    implementation(libs.material)
+
+    // CollectAsStateWithLifecycle
+    implementation(libs.lifecycleRuntimeCompose)
+
     //Activity EdgeToEdge
     implementation(libs.activityEdgeToEdge)
 
-    // Retrofit
-    implementation(libs.remote.okhttp)
-    implementation(libs.remote.converterGson)
-    implementation(libs.remote.retrofit)
 
 }

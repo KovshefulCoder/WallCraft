@@ -1,5 +1,6 @@
 package ru.kovsheful.wallcraft.ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -17,11 +18,42 @@ val roboto = FontFamily(
 )
 
 val typography = Typography(
+    headlineMedium = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
     titleLarge = TextStyle(
         fontFamily = roboto,
         fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+    titleMedium = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
-        color = TextColor,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+    titleSmall = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
         )
@@ -30,7 +62,6 @@ val typography = Typography(
         fontFamily = roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        color = TextColor,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
         )
@@ -39,7 +70,14 @@ val typography = Typography(
         fontFamily = roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        color = TextColor,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+    labelLarge = TextStyle(
+        fontFamily = roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
         )
@@ -48,7 +86,6 @@ val typography = Typography(
         fontFamily = roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 10.sp,
-        color = TextColor,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
         )
