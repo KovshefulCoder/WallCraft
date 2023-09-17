@@ -18,8 +18,10 @@ import ru.kovsheful.wallcraft.data.remote.CollectionsAPI
 import ru.kovsheful.wallcraft.data.remote.ImageAPI
 import ru.kovsheful.wallcraft.data.repository.CollectionsRepositoryImpl
 import ru.kovsheful.wallcraft.data.repository.ImageRepositoryImpl
+import ru.kovsheful.wallcraft.data.repository.SettingsRepositoryImpl
 import ru.kovsheful.wallcraft.domain.repository.CollectionsRepository
 import ru.kovsheful.wallcraft.domain.repository.ImageRepository
+import ru.kovsheful.wallcraft.domain.repository.SettingsRepository
 import javax.inject.Singleton
 
 @Module
@@ -69,4 +71,9 @@ interface RemoteBindModule {
     fun bindImageRepositoryImpl_to_ImageRepository(
         impl: ImageRepositoryImpl
     ): ImageRepository
+
+    @Binds
+    fun bindSettingsRepositoryImpl_to_SettingsRepository(
+        impl: SettingsRepositoryImpl
+    ): SettingsRepository
 }

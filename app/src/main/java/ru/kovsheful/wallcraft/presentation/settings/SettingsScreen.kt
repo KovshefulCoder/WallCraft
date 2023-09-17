@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.SliderColors
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults.colors
+//import androidx.compose.material3.SwitchDefaults.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -86,7 +89,9 @@ internal fun SettingsScreen(
     SettingsScreen(
         onReturn = onReturn,
         isDarkTheme = state.isDarkTheme,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        numberOfCollections = state.numberOfCollections,
+        imagesInCollection = state.imagesInCollection
 
     )
 }
@@ -95,6 +100,8 @@ internal fun SettingsScreen(
 private fun SettingsScreen(
     onReturn: () -> Unit,
     isDarkTheme: Boolean,
+    numberOfCollections: Int,
+    imagesInCollection: Int,
     onEvent: (SettingsScreenEvent) -> Unit
 ) {
     WallCraftAdditionalScreenWithScaffold(
@@ -105,7 +112,6 @@ private fun SettingsScreen(
             title = stringResource(id = R.string.setting_theme_title),
             description = stringResource(id = R.string.setting_theme_description),
             descriptionColor = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(horizontal = 32.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -137,6 +143,62 @@ private fun SettingsScreen(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        SliderSettingsItem(
+            title = stringResource(id = R.string.settings_n_collections_title),
+            description = stringResource(id = R.string.settings_api_beware_desctiption),
+            descriptionColor = MaterialTheme.colorScheme.onSecondary,
+            sliderValue = numberOfCollections,
+            onSliderChange = { newValue ->
+                onEvent(SettingsScreenEvent.OnUpdateNCollections(newValue.toInt()))
+            },
+            onFinishChange = {
+                onEvent(SettingsScreenEvent.OnNCollectionsChangeFinished)
+            }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        SliderSettingsItem(
+            title = stringResource(id = R.string.settings_n_images_in_collection_title),
+            description = stringResource(id = R.string.settings_api_beware_desctiption) +
+                          stringResource(id = R.string.settings_n_images_in_collection_description),
+            descriptionColor = MaterialTheme.colorScheme.onSecondary,
+            sliderValue = imagesInCollection,
+            onSliderChange = { newValue ->
+                onEvent(SettingsScreenEvent.OnUpdateNImagesInCollection(newValue.toInt()))
+            },
+            onFinishChange = {
+                onEvent(SettingsScreenEvent.OnNImagesInCollectionChangeFinished)
+            }
+        )
+    }
+}
+
+@Composable
+fun SliderSettingsItem(
+    title: String,
+    description: String,
+    descriptionColor: Color,
+    sliderValue: Int,
+    onSliderChange: (Float) -> Unit,
+    onFinishChange: () -> Unit
+) {
+    SettingsItem(
+        title = title,
+        description = description,
+        descriptionColor = descriptionColor,
+    ) {
+        Slider(
+            value = sliderValue.toFloat(),
+            onValueChange = onSliderChange,
+            onValueChangeFinished = { onFinishChange() },
+            valueRange = 1f..80f,
+            steps = 80,
+            colors = androidx.compose.material3.SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.primary,
+                activeTickColor = MaterialTheme.colorScheme.onSecondary,
+                inactiveTickColor = MaterialTheme.colorScheme.secondary
+            )
+        )
     }
 }
 
@@ -177,4 +239,9 @@ fun SettingsItem(
 sealed interface SettingsScreenEvent {
     data object OnLoadSettings : SettingsScreenEvent
     data class OnUpdateTheme(val isDarkTheme: Boolean) : SettingsScreenEvent
+    data class OnUpdateNCollections(val n: Int) : SettingsScreenEvent
+    data object OnNCollectionsChangeFinished: SettingsScreenEvent
+    data class OnUpdateNImagesInCollection(val n: Int) : SettingsScreenEvent
+    data object OnNImagesInCollectionChangeFinished: SettingsScreenEvent
+
 }

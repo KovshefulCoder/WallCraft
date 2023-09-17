@@ -11,12 +11,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.domain.repository.SettingsType
 import ru.kovsheful.wallcraft.domain.use_cases.GetAppSettings
+import ru.kovsheful.wallcraft.domain.use_cases.UpdateAppSettings
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val getAppSettings: GetAppSettings
+    private val getAppSettings: GetAppSettings,
+    private val updateAppSettings: UpdateAppSettings
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsState())
     val state = _state.asStateFlow()
@@ -47,6 +50,30 @@ class SettingsViewModel @Inject constructor(
                             isDarkTheme = event.isDarkTheme
                         )
                     }
+                }
+                is SettingsScreenEvent.OnUpdateNCollections -> {
+                    _state.update { curValue ->
+                        curValue.copy(
+                            numberOfCollections = event.n
+                        )
+                    }
+                }
+                is SettingsScreenEvent.OnUpdateNImagesInCollection -> {
+                    _state.update { curValue ->
+                        curValue.copy(
+                            imagesInCollection = event.n
+                        )
+                    }
+                }
+                is SettingsScreenEvent.OnNCollectionsChangeFinished -> {
+                    updateAppSettings.invoke(
+                        SettingsType.NumberOfCollections(state.value.numberOfCollections)
+                    )
+                }
+                is SettingsScreenEvent.OnNImagesInCollectionChangeFinished -> {
+                    updateAppSettings.invoke(
+                        SettingsType.NumberOfCollections(state.value.imagesInCollection)
+                    )
                 }
             }
         }
