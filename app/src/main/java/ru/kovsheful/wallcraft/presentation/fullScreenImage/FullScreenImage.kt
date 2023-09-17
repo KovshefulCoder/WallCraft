@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -56,6 +57,7 @@ import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 
 const val IMAGE_ID = "id"
@@ -80,8 +82,8 @@ fun NavGraphBuilder.fullScreenImage(
                 animationSpec = tween(300)
             )
         },
-    ) { entry ->
-        val imageID = entry.arguments?.getInt(IMAGE_ID) ?: 0
+    ) { navEntry ->
+        val imageID = navEntry.arguments?.getInt(IMAGE_ID) ?: 0
         if (imageID == 0) {
             Log.i(
                 "collectionImagesScreen",
@@ -92,30 +94,24 @@ fun NavGraphBuilder.fullScreenImage(
         BackHandler {
             navigateBack()
         }
-        FullScreenImage(imageID)
+        FullScreenImage(imageID, navEntry)
     }
 }
 
 @Composable
 internal fun FullScreenImage(
-    imageID: Int
+    imageID: Int,
+    navEntry: NavBackStackEntry
+
 ) {
-    val viewModel: FullScreenImageViewModel = hiltViewModel()
+    val viewModel: FullScreenImageViewModel = hiltViewModel(navEntry)
     LaunchedEffect(Unit) {
         viewModel.onEvent(FullScreenImageEvent.OnLoadImageInHighQuality(imageID))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
-    val context = LocalContext.current
-    LaunchedEffect(viewModelEvent) {
-        when (val event = viewModelEvent) {
-            is SharedViewModelEvents.None -> {}
-            is SharedViewModelEvents.OnShowToast -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    SharedToastLogic(event = viewModelEvent)
     FullScreenImage(
         imageUrl = state.highQualityImageUrl,
         onLoadingInViewModel = state.onLoading,

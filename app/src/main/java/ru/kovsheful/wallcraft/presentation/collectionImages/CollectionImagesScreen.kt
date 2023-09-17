@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -34,6 +35,7 @@ import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
 import ru.kovsheful.wallcraft.domain.models.ImageModel
@@ -65,9 +67,9 @@ fun NavGraphBuilder.collectionImages(
                 animationSpec = tween(300)
             )
         },
-    ) { entry ->
-        val collectionID = entry.arguments?.getString(COLLECTION_ID) ?: ""
-        val collectionEncodedTitle = entry.arguments?.getString(COLLECTION_ENCODED_TITLE) ?: ""
+    ) { navEntry ->
+        val collectionID = navEntry.arguments?.getString(COLLECTION_ID) ?: ""
+        val collectionEncodedTitle = navEntry.arguments?.getString(COLLECTION_ENCODED_TITLE) ?: ""
         if (collectionID.isEmpty() || collectionEncodedTitle.isEmpty() || collectionEncodedTitle == "none") {
             Log.i(
                 "collectionImagesScreen",
@@ -81,7 +83,8 @@ fun NavGraphBuilder.collectionImages(
         CollectionImagesScreen(
             collectionID = collectionID,
             collectionTitle = Uri.decode(collectionEncodedTitle),
-            onImageClicked = navigateToFullScreenImage
+            onImageClicked = navigateToFullScreenImage,
+            navEntry = navEntry
         )
 
     }
@@ -91,24 +94,17 @@ fun NavGraphBuilder.collectionImages(
 internal fun CollectionImagesScreen(
     collectionID: String,
     collectionTitle: String,
-    onImageClicked: (Int) -> Unit
+    onImageClicked: (Int) -> Unit,
+    navEntry: NavBackStackEntry
 ) {
-    val viewModel: CollectionImagesViewModel = hiltViewModel()
+    val viewModel: CollectionImagesViewModel = hiltViewModel(navEntry)
     LaunchedEffect(Unit) {
         viewModel.onEvent(CollectionImagesScreenEvents.OnLoadImages(collectionID))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
-    val context = LocalContext.current
-    LaunchedEffect(viewModelEvent) {
-        when (val event = viewModelEvent) {
-            is SharedViewModelEvents.None -> {}
-            is SharedViewModelEvents.OnShowToast -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    SharedToastLogic(event = viewModelEvent)
 
     CollectionImagesScreen(
         images = state.images,

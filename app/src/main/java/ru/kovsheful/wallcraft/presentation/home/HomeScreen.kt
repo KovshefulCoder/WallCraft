@@ -34,11 +34,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
 import ru.kovsheful.wallcraft.domain.models.CollectionModel
@@ -56,9 +58,10 @@ fun NavGraphBuilder.home(
         exitTransition = {
             fadeOut(animationSpec = tween(300))
         }
-    ) {
+    ) {navEntry ->
         MainScreen(
-            onCollectionClicked = onCollectionClicked
+            onCollectionClicked = onCollectionClicked,
+            navEntry = navEntry
         )
     }
 }
@@ -66,23 +69,16 @@ fun NavGraphBuilder.home(
 
 @Composable
 internal fun MainScreen(
-    onCollectionClicked: (String, String) -> Unit
+    onCollectionClicked: (String, String) -> Unit,
+    navEntry: NavBackStackEntry
 ) {
-    val viewModel: HomeViewModel = hiltViewModel()
+    val viewModel: HomeViewModel = hiltViewModel(navEntry)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
-    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.onEvent(HomeScreenEvents.OnLoadCollections)
     }
-    LaunchedEffect(viewModelEvent) {
-        when (val event = viewModelEvent) {
-            is SharedViewModelEvents.None -> {}
-            is SharedViewModelEvents.OnShowToast -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    SharedToastLogic(event = viewModelEvent)
     MainScreen(
         collections = state.collections,
         onCollectionClicked = { selectedID ->
