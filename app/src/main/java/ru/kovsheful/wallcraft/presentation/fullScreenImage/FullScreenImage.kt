@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -55,15 +57,10 @@ import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
-import ru.kovsheful.wallcraft.ui.theme.DropDownMenuColor
-import ru.kovsheful.wallcraft.ui.theme.SecondaryText
-import ru.kovsheful.wallcraft.ui.theme.TextColor
-import ru.kovsheful.wallcraft.ui.theme.typography
-
 
 const val IMAGE_ID = "id"
-
 
 fun NavGraphBuilder.fullScreenImage(
     navigateBack: () -> Unit,
@@ -85,8 +82,8 @@ fun NavGraphBuilder.fullScreenImage(
                 animationSpec = tween(300)
             )
         },
-    ) { entry ->
-        val imageID = entry.arguments?.getInt(IMAGE_ID) ?: 0
+    ) { navEntry ->
+        val imageID = navEntry.arguments?.getInt(IMAGE_ID) ?: 0
         if (imageID == 0) {
             Log.i(
                 "collectionImagesScreen",
@@ -97,30 +94,24 @@ fun NavGraphBuilder.fullScreenImage(
         BackHandler {
             navigateBack()
         }
-        FullScreenImage(imageID)
+        FullScreenImage(imageID, navEntry)
     }
 }
 
 @Composable
 internal fun FullScreenImage(
-    imageID: Int
+    imageID: Int,
+    navEntry: NavBackStackEntry
+
 ) {
-    val viewModel: FullScreenImageViewModel = hiltViewModel()
+    val viewModel: FullScreenImageViewModel = hiltViewModel(navEntry)
     LaunchedEffect(Unit) {
         viewModel.onEvent(FullScreenImageEvent.OnLoadImageInHighQuality(imageID))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
-    val context = LocalContext.current
-    LaunchedEffect(viewModelEvent) {
-        when (val event = viewModelEvent) {
-            is SharedViewModelEvents.None -> {}
-            is SharedViewModelEvents.OnShowToast -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    SharedToastLogic(event = viewModelEvent)
     FullScreenImage(
         imageUrl = state.highQualityImageUrl,
         onLoadingInViewModel = state.onLoading,
@@ -149,7 +140,7 @@ private fun FullScreenImage(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    color = TextColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(50.dp)
                 )
             }
@@ -162,14 +153,15 @@ private fun FullScreenImage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CircularProgressIndicator(
-                    color = TextColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(50.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.full_screen_image_loading_placeholder_text),
                     textAlign = TextAlign.Center,
-                    style = typography.titleSmall,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -187,7 +179,6 @@ private fun FullScreenImage(
             model = imageUrl,
             modifier = Modifier.fillMaxSize(),
             onLoading = {
-                Log.i("TEMP", "Start loading")
                 isImageLoading.value = true
             },
             onError = { error ->
@@ -201,7 +192,6 @@ private fun FullScreenImage(
                     //UPDATE: Added issue on Coil GitHub: https://github.com/coil-kt/coil/issues/1864
                     isErrorLoading.value = true
                 }
-                Log.i("TEMP", "Error loading, ${error.result.throwable.message}")
             },
             onSuccess = {
                 isImageLoading.value = false
@@ -214,7 +204,7 @@ private fun FullScreenImage(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
                 .background(
-                    color = DropDownMenuColor,
+                    color = MaterialTheme.colorScheme.secondary,
                     shape = RoundedCornerShape(5.dp)
                 ),
             verticalAlignment = Alignment.CenterVertically,
@@ -237,7 +227,7 @@ private fun FullScreenImage(
             ActionButton(
                 title = stringResource(R.string.download_button_title),
                 icon = ImageVector.vectorResource(R.drawable.ic_download),
-                iconColor = Color.White,
+                iconColor = MaterialTheme.colorScheme.onBackground,
                 onClick = { onEvent(FullScreenImageEvent.OnDownloadImage) }
             )
             ActionButton(
@@ -275,7 +265,8 @@ fun ActionButton(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = title,
-                style = typography.labelLarge,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -292,13 +283,14 @@ fun WallpaperDropDownMenu(
     DropdownMenu(
         expanded = dropDownMenuStatus,
         onDismissRequest = onDropDownHide,
-        modifier = Modifier.background(DropDownMenuColor),
+        modifier = Modifier.background(MaterialTheme.colorScheme.secondary),
     ) {
         DropdownMenuItem(
             text = {
                 Text(
                     text = stringResource(R.string.dropdown_menu_wallpaper_all_screens),
-                    style = typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             },
             onClick = {
@@ -311,7 +303,8 @@ fun WallpaperDropDownMenu(
             text = {
                 Text(
                     text = stringResource(R.string.dropdown_menu_wallpaper_lock_screen),
-                    style = typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             },
             onClick = {
@@ -324,7 +317,8 @@ fun WallpaperDropDownMenu(
             text = {
                 Text(
                     text = stringResource(R.string.dropdown_menu_wallpaper_desktop),
-                    style = typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             },
             onClick = {

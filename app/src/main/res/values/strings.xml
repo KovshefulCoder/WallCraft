@@ -14,4 +14,12 @@
     <string name="dropdown_menu_wallpaper_all_screens">Both screens</string>
     <string name="dropdown_menu_wallpaper_lock_screen">Lock screen</string>
     <string name="dropdown_menu_wallpaper_desktop">Desktop</string>
+    <string name="settings_screen_title">Settings</string>
+    <string name="setting_theme_title">App theme</string>
+
+    <string name="settings_n_collections_title">Number of collections</string>
+    <string name="settings_api_beware_desctiption">Beware! Current photo API has only 200 requests per hour</string>
+
+    <string name="settings_n_images_in_collection_title">Number of images in collection</string>
+    <string name="settings_n_images_in_collection_description">\nSometimes there can be less photos</string>
 </resources>

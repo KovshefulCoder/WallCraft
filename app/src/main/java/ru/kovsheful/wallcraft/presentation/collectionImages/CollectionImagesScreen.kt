@@ -6,10 +6,8 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +16,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavArgument
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -36,19 +35,21 @@ import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import ru.kovsheful.wallcraft.R
 import ru.kovsheful.wallcraft.core.Screens
+import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.core.TopBarEvents
 import ru.kovsheful.wallcraft.core.WallCraftScaffoldNColumn
-import ru.kovsheful.wallcraft.domain.models.CollectionModel
 import ru.kovsheful.wallcraft.domain.models.ImageModel
-import ru.kovsheful.wallcraft.presentation.home.CategoryGridItem
-import ru.kovsheful.wallcraft.ui.theme.TextColor
 
 const val COLLECTION_ID = "id"
 const val COLLECTION_ENCODED_TITLE = "title"
 
 fun NavGraphBuilder.collectionImages(
     navigateBack: () -> Unit,
-    navigateToFullScreenImage: (Int) -> Unit
+    navigateToFullScreenImage: (Int) -> Unit,
+    onSettings: () -> Unit,
+    onFavorite: () -> Unit,
+    onDownloads: () -> Unit
 ) {
     composable(
         route = Screens.CollectionImages.route + "/{$COLLECTION_ID}/{$COLLECTION_ENCODED_TITLE}",
@@ -70,9 +71,9 @@ fun NavGraphBuilder.collectionImages(
                 animationSpec = tween(300)
             )
         },
-    ) { entry ->
-        val collectionID = entry.arguments?.getString(COLLECTION_ID) ?: ""
-        val collectionEncodedTitle = entry.arguments?.getString(COLLECTION_ENCODED_TITLE) ?: ""
+    ) { navEntry ->
+        val collectionID = navEntry.arguments?.getString(COLLECTION_ID) ?: ""
+        val collectionEncodedTitle = navEntry.arguments?.getString(COLLECTION_ENCODED_TITLE) ?: ""
         if (collectionID.isEmpty() || collectionEncodedTitle.isEmpty() || collectionEncodedTitle == "none") {
             Log.i(
                 "collectionImagesScreen",
@@ -86,7 +87,16 @@ fun NavGraphBuilder.collectionImages(
         CollectionImagesScreen(
             collectionID = collectionID,
             collectionTitle = Uri.decode(collectionEncodedTitle),
-            onImageClicked = navigateToFullScreenImage
+            onImageClicked = navigateToFullScreenImage,
+            onTopBarEvent = { topBarEvent ->
+                when (topBarEvent) {
+                    TopBarEvents.OnSettings -> onSettings()
+                    TopBarEvents.OnFavorite -> onFavorite()
+                    TopBarEvents.OnDownloads -> onDownloads()
+                    else -> navigateBack()
+                }
+            },
+            navEntry = navEntry
         )
 
     }
@@ -96,29 +106,24 @@ fun NavGraphBuilder.collectionImages(
 internal fun CollectionImagesScreen(
     collectionID: String,
     collectionTitle: String,
-    onImageClicked: (Int) -> Unit
+    onImageClicked: (Int) -> Unit,
+    onTopBarEvent: (TopBarEvents) -> Unit,
+    navEntry: NavBackStackEntry
 ) {
-    val viewModel: CollectionImagesViewModel = hiltViewModel()
+    val viewModel: CollectionImagesViewModel = hiltViewModel(navEntry)
     LaunchedEffect(Unit) {
         viewModel.onEvent(CollectionImagesScreenEvents.OnLoadImages(collectionID))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
-    val context = LocalContext.current
-    LaunchedEffect(viewModelEvent) {
-        when (val event = viewModelEvent) {
-            is SharedViewModelEvents.None -> {}
-            is SharedViewModelEvents.OnShowToast -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    SharedToastLogic(event = viewModelEvent)
 
     CollectionImagesScreen(
         images = state.images,
         collectionTitle = collectionTitle,
-        onImageClicked = onImageClicked
+        onImageClicked = onImageClicked,
+        onTopBarEvent = onTopBarEvent
 
     )
 }
@@ -127,16 +132,18 @@ internal fun CollectionImagesScreen(
 private fun CollectionImagesScreen(
     images: List<ImageModel>,
     collectionTitle: String,
-    onImageClicked: (Int) -> Unit
-) {
+    onImageClicked: (Int) -> Unit,
+    onTopBarEvent: (TopBarEvents) -> Unit,
+    ) {
     WallCraftScaffoldNColumn(
         scaffoldTitle = collectionTitle,
-        subtitle = stringResource(id = R.string.collection_images_screen_subtitle)
+        subtitle = stringResource(id = R.string.collection_images_screen_subtitle),
+        onTopBarEvent = onTopBarEvent
     )
     {
         if (images == listOf<ImageModel>()) {
             CircularProgressIndicator(
-                color = TextColor,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(vertical = 100.dp)
                     .size(50.dp)
