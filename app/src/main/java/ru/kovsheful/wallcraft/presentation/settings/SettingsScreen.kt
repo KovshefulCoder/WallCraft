@@ -1,6 +1,5 @@
 package ru.kovsheful.wallcraft.presentation.settings
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -61,14 +60,11 @@ fun NavGraphBuilder.settings(
             )
         },
     ) { navBackStackEntry ->
-        val viewModel: SettingsViewModel = hiltViewModel(navBackStackEntry)
-
         BackHandler {
             navigateBack()
         }
         SettingsScreen(
-            onReturn = {
-                navigateBack() },
+            onReturn = { navigateBack() },
             navEntry = navBackStackEntry
         )
     }

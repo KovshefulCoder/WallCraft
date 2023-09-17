@@ -11,11 +11,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.domain.use_cases.GetAppSettings
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-
+    private val getAppSettings: GetAppSettings
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsState())
     val state = _state.asStateFlow()
@@ -31,7 +32,14 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is SettingsScreenEvent.OnLoadSettings -> {
-
+                    val settings = getAppSettings()
+                    _state.update { curValue ->
+                        curValue.copy(
+                            isDarkTheme = settings.isDarkTheme,
+                            numberOfCollections = settings.numberOfCollections,
+                            imagesInCollection = settings.imagesInCollection
+                        )
+                    }
                 }
                 is SettingsScreenEvent.OnUpdateTheme -> {
                     _state.update { curValue ->
