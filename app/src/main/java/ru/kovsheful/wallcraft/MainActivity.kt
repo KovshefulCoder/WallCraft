@@ -1,5 +1,6 @@
 package ru.kovsheful.wallcraft
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -24,13 +25,18 @@ import ru.kovsheful.wallcraft.ui.theme.WallCraftCleanArchitectureTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPref = this.baseContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
         setContent {
-            WallCraftCleanArchitectureTheme {
+            WallCraftCleanArchitectureTheme(
+                isDarkTheme = sharedPref.getBoolean("isDarkTheme", true)
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    WallCraftApp()
+                    WallCraftApp(
+                        activity = this
+                    )
                 }
             }
         }
@@ -38,7 +44,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun WallCraftApp() {
+fun WallCraftApp(
+    activity: ComponentActivity
+) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -61,9 +69,12 @@ fun WallCraftApp() {
             onDownloads = {},
             onFavorite = {},
         )
-        fullScreenImage( navigateBack = { navController.popBackStack() } )
-        settings( navigateBack = {
-            navController.popBackStack()
-        } )
+        fullScreenImage(navigateBack = { navController.popBackStack() })
+        settings(
+            activity = activity,
+            navigateBack = {
+                navController.popBackStack()
+            }
+        )
     }
 }

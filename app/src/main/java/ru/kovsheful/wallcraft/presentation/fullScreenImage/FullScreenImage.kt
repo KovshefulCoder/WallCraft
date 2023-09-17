@@ -179,7 +179,6 @@ private fun FullScreenImage(
             model = imageUrl,
             modifier = Modifier.fillMaxSize(),
             onLoading = {
-                Log.i("TEMP", "Start loading")
                 isImageLoading.value = true
             },
             onError = { error ->
@@ -193,7 +192,6 @@ private fun FullScreenImage(
                     //UPDATE: Added issue on Coil GitHub: https://github.com/coil-kt/coil/issues/1864
                     isErrorLoading.value = true
                 }
-                Log.i("TEMP", "Error loading, ${error.result.throwable.message}")
             },
             onSuccess = {
                 isImageLoading.value = false

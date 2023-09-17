@@ -10,7 +10,7 @@ class SettingsRepositoryImpl @Inject constructor(
     private val settingsManager: SettingsManager
 ): SettingsRepository {
     override suspend fun getSettings() = SettingsModel (
-        isDarkTheme = (settingsManager.getTheme() == "dark"),
+        isDarkTheme = settingsManager.getTheme(),
         numberOfCollections = settingsManager.getNumberOfCollections(),
         imagesInCollection = settingsManager.getNumberImagesInCollection()
     )

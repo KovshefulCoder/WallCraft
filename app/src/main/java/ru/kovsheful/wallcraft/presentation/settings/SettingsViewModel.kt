@@ -1,5 +1,7 @@
 package ru.kovsheful.wallcraft.presentation.settings
 
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,13 +21,16 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val getAppSettings: GetAppSettings,
-    private val updateAppSettings: UpdateAppSettings
+    private val updateAppSettings: UpdateAppSettings,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<SharedViewModelEvents> = MutableSharedFlow()
     val event: SharedFlow<SharedViewModelEvents> = _eventFlow.asSharedFlow()
+
+    private val _activityFlow: MutableSharedFlow<ActivityFlowEvents> = MutableSharedFlow()
+    val activityFlow = _activityFlow.asSharedFlow()
 
     companion object {
         const val TAG = "SettingsViewModel"
@@ -50,6 +55,8 @@ class SettingsViewModel @Inject constructor(
                             isDarkTheme = event.isDarkTheme
                         )
                     }
+                    updateAppSettings(SettingsType.Theme(state.value.isDarkTheme))
+                    _activityFlow.emit(ActivityFlowEvents.RecreateActivity)
                 }
                 is SettingsScreenEvent.OnUpdateNCollections -> {
                     _state.update { curValue ->
@@ -66,16 +73,21 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
                 is SettingsScreenEvent.OnNCollectionsChangeFinished -> {
-                    updateAppSettings.invoke(
+                    updateAppSettings(
                         SettingsType.NumberOfCollections(state.value.numberOfCollections)
                     )
                 }
                 is SettingsScreenEvent.OnNImagesInCollectionChangeFinished -> {
-                    updateAppSettings.invoke(
+                    updateAppSettings(
                         SettingsType.NumberOfCollections(state.value.imagesInCollection)
                     )
                 }
             }
         }
     }
+}
+
+sealed interface ActivityFlowEvents {
+    data object None: ActivityFlowEvents
+    data object RecreateActivity: ActivityFlowEvents
 }

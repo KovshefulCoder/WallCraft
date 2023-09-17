@@ -1,6 +1,7 @@
 package ru.kovsheful.wallcraft.ui.theme
 
 import android.app.Activity
+import android.content.SharedPreferences
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -31,17 +32,16 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun WallCraftCleanArchitectureTheme(
-    dynamicColor: Boolean = true,
+    isDarkTheme: Boolean,
     content: @Composable () -> Unit
 ) {
-    val darkTheme: Boolean = isSystemInDarkTheme()
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = if (isDarkTheme) DarkColorScheme else LightColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = android.graphics.Color.TRANSPARENT
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = isDarkTheme
         }
     }
 

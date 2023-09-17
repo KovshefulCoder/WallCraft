@@ -1,5 +1,7 @@
 package ru.kovsheful.wallcraft.presentation.settings
 
+//import androidx.compose.material3.SwitchDefaults.colors
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -9,15 +11,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.SliderColors
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults.colors
-//import androidx.compose.material3.SwitchDefaults.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,13 +38,15 @@ import ru.kovsheful.wallcraft.core.SharedToastLogic
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.WallCraftAdditionalScreenWithScaffold
 
-fun NavController.navigateToSetting() {
+fun NavController.navigateToSetting()
+{
     this.navigate(
         route = Screens.Settings.route
     )
 }
 
 fun NavGraphBuilder.settings(
+    activity: ComponentActivity,
     navigateBack: () -> Unit
 ) {
     composable(
@@ -68,7 +69,10 @@ fun NavGraphBuilder.settings(
         }
         SettingsScreen(
             onReturn = { navigateBack() },
-            navEntry = navBackStackEntry
+            navEntry = navBackStackEntry,
+            recreateActivity = {
+                activity.recreate()
+            }
         )
     }
 }
@@ -76,7 +80,8 @@ fun NavGraphBuilder.settings(
 @Composable
 internal fun SettingsScreen(
     onReturn: () -> Unit,
-    navEntry: NavBackStackEntry
+    navEntry: NavBackStackEntry,
+    recreateActivity: () -> Unit
 ) {
     val viewModel: SettingsViewModel = hiltViewModel(navEntry)
     LaunchedEffect(Unit) {
@@ -85,6 +90,15 @@ internal fun SettingsScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
+    val activityEvent by viewModel.activityFlow.collectAsStateWithLifecycle(initialValue = ActivityFlowEvents.None)
+    LaunchedEffect(activityEvent) {
+        when(activityEvent) {
+            ActivityFlowEvents.None -> {}
+            ActivityFlowEvents.RecreateActivity -> {
+                recreateActivity()
+            }
+        }
+    }
     SharedToastLogic(event = viewModelEvent)
     SettingsScreen(
         onReturn = onReturn,
