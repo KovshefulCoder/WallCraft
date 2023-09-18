@@ -102,7 +102,6 @@ fun NavGraphBuilder.fullScreenImage(
 internal fun FullScreenImage(
     imageID: Int,
     navEntry: NavBackStackEntry
-
 ) {
     val viewModel: FullScreenImageViewModel = hiltViewModel(navEntry)
     LaunchedEffect(Unit) {
@@ -113,7 +112,7 @@ internal fun FullScreenImage(
     val viewModelEvent by viewModel.event.collectAsStateWithLifecycle(initialValue = SharedViewModelEvents.None)
     SharedToastLogic(event = viewModelEvent)
     FullScreenImage(
-        imageUrl = state.highQualityImageUrl,
+        imageUrl = state.image.highQualityUrl,
         onLoadingInViewModel = state.onLoading,
         onEvent = viewModel::onEvent
     )
@@ -161,7 +160,7 @@ private fun FullScreenImage(
                     text = stringResource(R.string.full_screen_image_loading_placeholder_text),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -234,7 +233,7 @@ private fun FullScreenImage(
                 title = stringResource(R.string.add_to_favorite_button_title),
                 icon = Icons.Default.Favorite,
                 iconColor = Color.Red,
-                onClick = {}
+                onClick = { onEvent(FullScreenImageEvent.OnAddToFavorites) }
             )
 
         }
@@ -333,4 +332,5 @@ sealed interface FullScreenImageEvent {
     data class OnLoadImageInHighQuality(val imageID: Int) : FullScreenImageEvent
     data class OnSetAsWallpaper(val wallpaperType: Int = 0) : FullScreenImageEvent
     data object OnDownloadImage : FullScreenImageEvent
+    data object OnAddToFavorites: FullScreenImageEvent
 }

@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 fun SharedToastLogic(event: SharedViewModelEvents) {
     val context = LocalContext.current
     LaunchedEffect(event) {
-        when (val event = event) {
+        when (event) {
             is SharedViewModelEvents.None -> {}
             is SharedViewModelEvents.OnShowToast -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()

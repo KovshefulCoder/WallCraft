@@ -1,4 +1,4 @@
-package ru.kovsheful.wallcraft.domain.use_cases
+package ru.kovsheful.wallcraft.domain.use_cases.settings
 
 import ru.kovsheful.wallcraft.domain.models.SettingsModel
 import ru.kovsheful.wallcraft.domain.repository.SettingsRepository

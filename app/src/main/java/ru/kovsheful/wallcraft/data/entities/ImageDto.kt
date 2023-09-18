@@ -1,10 +1,9 @@
 package ru.kovsheful.wallcraft.data.entities
 
 import com.google.gson.annotations.SerializedName
-import ru.kovsheful.wallcraft.data.entities.Src
 import ru.kovsheful.wallcraft.domain.models.ImageModel
 
-data class ImageEntity(
+data class ImageDto(
     val alt: String,
     @SerializedName("avg_color")
     val avgColor: String,
@@ -20,9 +19,10 @@ data class ImageEntity(
     val url: String,
     val width: Int
 ) {
-    fun toImageEntity() = ImageModel(
+    fun toImageModel() = ImageModel(
         id = id,
         url = src.medium,
+        name = alt,
         highQualityUrl = src.large2x
     )
 }

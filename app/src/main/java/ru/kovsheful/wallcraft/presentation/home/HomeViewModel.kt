@@ -1,6 +1,5 @@
 package ru.kovsheful.wallcraft.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.core.TooManyRequests
-import ru.kovsheful.wallcraft.domain.use_cases.GetListOfCollections
-import ru.kovsheful.wallcraft.domain.use_cases.GetTitleImageOfCollection
+import ru.kovsheful.wallcraft.domain.use_cases.collection.GetListOfCollections
+import ru.kovsheful.wallcraft.domain.use_cases.collection.GetTitleImageOfCollection
 import ru.kovsheful.wallcraft.presentation.collectionImages.CollectionImagesViewModel
 import ru.kovsheful.wallcraft.utils.catchSharedViewModelException
 import javax.inject.Inject
