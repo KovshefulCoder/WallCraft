@@ -30,7 +30,6 @@ class ImageWallpaperManager @Inject constructor(
         try {
             val request = DownloadManager.Request(imageUrl.toUri())
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
-                .setTitle("")
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "wallpaper.jpg")
             val imageID = downloadManager.enqueue(request)
             val receiver = object : BroadcastReceiver() {

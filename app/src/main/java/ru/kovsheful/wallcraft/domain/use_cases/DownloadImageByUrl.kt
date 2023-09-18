@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DownloadImageByUrl @Inject constructor(
     private val imageRepository: ImageRepository
 ) {
-    suspend operator fun invoke(url: String) {
-        return imageRepository.downloadImageFromUrl(url)
+    suspend operator fun invoke(url: String, imageApiID: Int) {
+        return imageRepository.downloadImageFromUrl(url, imageApiID)
     }
 }

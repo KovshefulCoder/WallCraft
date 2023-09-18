@@ -1,5 +1,6 @@
 package ru.kovsheful.wallcraft.presentation.fullScreenImage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.kovsheful.wallcraft.core.ErrorWhileSetWallpaper
+import ru.kovsheful.wallcraft.core.ImageAlreadyHaveThisStatus
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.domain.use_cases.DownloadImageByUrl
 import ru.kovsheful.wallcraft.domain.use_cases.GetHighQualityImage
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FullScreenImageViewModel @Inject constructor(
     private val getHighQualityImage: GetHighQualityImage,
-    private val setImageAsWallpaper: SetImageAsWallpaper
+    private val setImageAsWallpaper: SetImageAsWallpaper,
+    private val downloadImageByUrl: DownloadImageByUrl
 ) : ViewModel() {
     private val _state = MutableStateFlow(FullScreenImageState())
     val state = _state.asStateFlow()
@@ -39,26 +41,43 @@ class FullScreenImageViewModel @Inject constructor(
                 is FullScreenImageEvent.OnLoadImageInHighQuality -> {
                     _state.update { curValue ->
                         curValue.copy(
+                            imageID = event.imageID,
                             highQualityImageUrl = getHighQualityImage(event.imageID)
                         )
                     }
                 }
                 is FullScreenImageEvent.OnSetAsWallpaper -> {
-                    try {
-                        _state.update {
-                            curValue -> curValue.copy( onLoading = true)
-                        }
+                    sharedVMLogic {
                         setImageAsWallpaper(state.value.highQualityImageUrl, event.wallpaperType)
-                        _eventFlow.emit(SharedViewModelEvents.OnShowToast("Success"))
-                    } catch (e: Exception) {
-                        _eventFlow.emit(SharedViewModelEvents.OnShowToast(e.message ?: "Unknown error"))
-                    } finally {
-                        _state.update { curValue -> curValue.copy( onLoading = false) }
                     }
-
+                }
+                is FullScreenImageEvent.OnDownloadImage -> {
+                    sharedVMLogic {
+                        downloadImageByUrl(state.value.highQualityImageUrl, state.value.imageID)
+                    }
                 }
                 else -> {}
             }
+        }
+    }
+
+    private suspend fun sharedVMLogic(
+        useCase: suspend () -> Unit
+    ) {
+        try {
+            _state.update { curValue ->
+                curValue.copy(onLoading = true)
+            }
+            useCase()
+            _eventFlow.emit(SharedViewModelEvents.OnShowToast("Success"))
+        } catch (e: ImageAlreadyHaveThisStatus) {
+            _eventFlow.emit(SharedViewModelEvents.OnShowToast(e.message))
+
+        } catch (e: Exception) {
+            Log.i(TAG, "Ex message: " + (e.message ?: "No message"))
+            _eventFlow.emit(SharedViewModelEvents.OnShowToast(e.message ?: "Unknown error"))
+        } finally {
+            _state.update { curValue -> curValue.copy( onLoading = false) }
         }
     }
 }

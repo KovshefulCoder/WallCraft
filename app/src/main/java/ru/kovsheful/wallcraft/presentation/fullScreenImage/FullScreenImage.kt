@@ -333,4 +333,5 @@ sealed interface FullScreenImageEvent {
     data class OnLoadImageInHighQuality(val imageID: Int) : FullScreenImageEvent
     data class OnSetAsWallpaper(val wallpaperType: Int = 0) : FullScreenImageEvent
     data object OnDownloadImage : FullScreenImageEvent
+    data object OnAddToFavorites: FullScreenImageEvent
 }
