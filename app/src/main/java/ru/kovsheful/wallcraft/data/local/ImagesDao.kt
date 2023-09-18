@@ -7,11 +7,14 @@ import androidx.room.Upsert
 @Dao
 interface ImagesDao {
 
-    @Query("SELECT * from images")
+    @Query("SELECT * FROM images")
     suspend fun getAllImages(): List<ImageEntity>
 
-    @Query("SELECT * from images WHERE localUri != NULL")
-    suspend fun getLocalImages(): List<ImageEntity>
+    @Query("SELECT * FROM images WHERE localUri IS NOT NULL")
+    suspend fun getDownloadedImages(): List<ImageEntity>
+
+    @Query("SELECT * FROM images WHERE isFavorite = 1")
+    suspend fun getFavoriteImages(): List<ImageEntity>
 
     @Upsert
     suspend fun upsertImage(image: ImageEntity)

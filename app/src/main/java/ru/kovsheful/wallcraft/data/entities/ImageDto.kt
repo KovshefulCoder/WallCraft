@@ -19,9 +19,10 @@ data class ImageDto(
     val url: String,
     val width: Int
 ) {
-    fun toImageEntity() = ImageModel(
+    fun toImageModel() = ImageModel(
         id = id,
         url = src.medium,
+        name = alt,
         highQualityUrl = src.large2x
     )
 }

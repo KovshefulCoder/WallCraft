@@ -3,8 +3,8 @@ package ru.kovsheful.wallcraft.domain.repository
 import ru.kovsheful.wallcraft.domain.models.ImageModel
 
 interface ImageRepository {
-    suspend fun getHighQualityImageUrl(imageID: Int): String
-    suspend fun downloadImageFromUrl(imageUrl: String, imageApiID: Int)
+    suspend fun getHighQualityImageUrl(imageID: Int): ImageModel
+    suspend fun downloadImageFromUrl(image: ImageModel)
     suspend fun addImageToFavorites(image: ImageModel)
-    suspend fun setImageAsWallpaper(imageUrl: String, wallpaperType: Int)
+    suspend fun setImageAsWallpaper(image: ImageModel, wallpaperType: Int)
 }

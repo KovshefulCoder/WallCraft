@@ -20,16 +20,17 @@ class ImageRepositoryImpl @Inject constructor(
     private val imageWallpaperManager: ImageWallpaperManager,
     private val imagesDao: ImagesDao
 ) : ImageRepository {
-    override suspend fun getHighQualityImageUrl(imageID: Int): String = apiCall {
-        imageAPI.getHighQualityImage(imageID).toImageEntity().highQualityUrl
+    override suspend fun getHighQualityImageUrl(imageID: Int): ImageModel = apiCall {
+        imageAPI.getHighQualityImage(imageID).toImageModel()
     }
 
-    override suspend fun downloadImageFromUrl(imageUrl: String, imageApiID: Int) {
-        val downloadedImages = imagesDao.getLocalImages()
-        if (downloadedImages.none { img -> img.id == imageApiID }) {
+    override suspend fun downloadImageFromUrl(image: ImageModel) {
+        val downloadedImages = imagesDao.getDownloadedImages()
+        if (downloadedImages.none { downloadedImg -> downloadedImg.id == image.id }) {
             imageDownloadManager.downloadImage(
-                imageUrl = imageUrl,
-                imageApiID = imageApiID,
+                imageUrl = image.url,
+                imageApiID = image.id,
+                imageName = image.name,
                 visibilityStatus = DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
             )
         } else {
@@ -38,22 +39,23 @@ class ImageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addImageToFavorites(image: ImageModel) {
-        val downloadedImages = imagesDao.getLocalImages()
-        if (downloadedImages.none { img -> img.id == image.id }) {
-            imagesDao.upsertImage(imageModel_to_ImageEntity(image))
+        val downloadedImages = imagesDao.getDownloadedImages()
+        if (downloadedImages.none { downloadedImg -> downloadedImg.id == image.id }) {
+            imagesDao.upsertImage(imageModelToImageEntity(image))
         } else {
             throw ImageAlreadyHaveThisStatus("Image already in favorites")
         }
     }
 
-    override suspend fun setImageAsWallpaper(imageUrl: String, wallpaperType: Int) {
+    override suspend fun setImageAsWallpaper(image: ImageModel, wallpaperType: Int) {
         withContext(Dispatchers.IO) {
-            imageWallpaperManager.setImageAsWallpaper(imageUrl, wallpaperType)
+            imageWallpaperManager.setImageAsWallpaper(imageModelToImageEntity(image), wallpaperType)
         }
     }
 }
 
-fun imageModel_to_ImageEntity(imageModel: ImageModel) = ImageEntity(
+fun imageModelToImageEntity(imageModel: ImageModel) = ImageEntity(
     id = imageModel.id,
     url = imageModel.url,
+    name = imageModel.name
 )

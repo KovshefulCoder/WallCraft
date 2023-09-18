@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.ImageAlreadyHaveThisStatus
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
+import ru.kovsheful.wallcraft.domain.models.ImageModel
 import ru.kovsheful.wallcraft.domain.use_cases.DownloadImageByUrl
 import ru.kovsheful.wallcraft.domain.use_cases.GetHighQualityImage
 import ru.kovsheful.wallcraft.domain.use_cases.SetImageAsWallpaper
@@ -39,21 +40,21 @@ class FullScreenImageViewModel @Inject constructor(
         viewModelScope.launch {
             when(event) {
                 is FullScreenImageEvent.OnLoadImageInHighQuality -> {
+                    val image = getHighQualityImage(event.imageID)
                     _state.update { curValue ->
                         curValue.copy(
-                            imageID = event.imageID,
-                            highQualityImageUrl = getHighQualityImage(event.imageID)
+                            image = image
                         )
                     }
                 }
                 is FullScreenImageEvent.OnSetAsWallpaper -> {
                     sharedVMLogic {
-                        setImageAsWallpaper(state.value.highQualityImageUrl, event.wallpaperType)
+                        setImageAsWallpaper(state.value.image, event.wallpaperType)
                     }
                 }
                 is FullScreenImageEvent.OnDownloadImage -> {
                     sharedVMLogic {
-                        downloadImageByUrl(state.value.highQualityImageUrl, state.value.imageID)
+                        downloadImageByUrl(state.value.image)
                     }
                 }
                 else -> {}

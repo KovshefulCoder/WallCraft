@@ -161,7 +161,7 @@ private fun FullScreenImage(
                     text = stringResource(R.string.full_screen_image_loading_placeholder_text),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     overflow = TextOverflow.Ellipsis
                 )
             }

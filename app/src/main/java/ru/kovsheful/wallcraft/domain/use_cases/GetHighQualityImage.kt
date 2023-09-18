@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetHighQualityImage @Inject constructor(
     private val imageRepository: ImageRepository
 ) {
-    suspend operator fun invoke(id: Int) : String {
+    suspend operator fun invoke(id: Int) : ImageModel {
         return imageRepository.getHighQualityImageUrl(id)
     }
 }

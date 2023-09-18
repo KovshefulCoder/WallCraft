@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -25,11 +26,15 @@ class ImageDownloadManager @Inject constructor(
     private val downloadManager = context.getSystemService(DownloadManager::class.java)
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    suspend fun downloadImage(imageUrl: String, imageApiID: Int, visibilityStatus: Int) =
-        withContext(Dispatchers.IO) {
+    suspend fun downloadImage(
+        imageUrl: String,
+        imageApiID: Int,
+        imageName: String,
+        visibilityStatus: Int
+    ) = withContext(Dispatchers.IO) {
             val request = DownloadManager.Request(imageUrl.toUri())
                 .setNotificationVisibility(visibilityStatus)
-                .setTitle("")
+                .setTitle(imageName)
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "wallpaper.jpg")
             val imageID = downloadManager.enqueue(request)
             val receiver = object : BroadcastReceiver() {
@@ -37,13 +42,16 @@ class ImageDownloadManager @Inject constructor(
                     if (intent.action == "android.intent.action.DOWNLOAD_COMPLETE") {
                         val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
                         if (id == imageID) {
-                            val imageUri = downloadManager.getUriForDownloadedFile(id).toString()
+                            val imageUri = downloadManager.getUriForDownloadedFile(id)
                             CoroutineScope(Dispatchers.IO).launch {
+                                Log.i("TEMP", "start launch")
                                 imagesDao.upsertImage(ImageEntity(
                                     id = imageApiID,
                                     url = imageUrl,
-                                    localUri = imageUri
+                                    localUri = imageUri.toString(),
+                                    name = imageName
                                 ))
+                                Log.i("TEMP", "end launch")
                             }
                         }
                     }
