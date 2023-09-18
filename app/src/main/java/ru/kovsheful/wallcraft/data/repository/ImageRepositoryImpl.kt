@@ -39,8 +39,8 @@ class ImageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addImageToFavorites(image: ImageModel) {
-        val downloadedImages = imagesDao.getDownloadedImages()
-        if (downloadedImages.none { downloadedImg -> downloadedImg.id == image.id }) {
+        val favoriteImages = imagesDao.getFavoriteImages()
+        if (favoriteImages.none { favoriteImg -> favoriteImg.id == image.id }) {
             imagesDao.upsertImage(imageModelToImageEntity(image, isFavorite = true))
         } else {
             throw ImageAlreadyHaveThisStatus("Image already in favorites")
@@ -66,7 +66,7 @@ class ImageRepositoryImpl @Inject constructor(
 
 fun imageModelToImageEntity(imageModel: ImageModel, isFavorite: Boolean = false) = ImageEntity(
     id = imageModel.id,
-    url = imageModel.url,
+    url = if (imageModel.highQualityUrl != "") imageModel.highQualityUrl else imageModel.url,
     isFavorite = isFavorite,
     name = imageModel.name
 )

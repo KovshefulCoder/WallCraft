@@ -42,6 +42,7 @@ class ImageWallpaperManager @Inject constructor(
                         )
                     }
                 }
+                return
             }
             val request = DownloadManager.Request(image.url.toUri())
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)

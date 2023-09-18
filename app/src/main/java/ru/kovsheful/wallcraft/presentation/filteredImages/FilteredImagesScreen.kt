@@ -128,7 +128,9 @@ private fun FilteredImages(
             columns = StaggeredGridCells.Adaptive(minSize = 160.dp),
             verticalItemSpacing = 4.dp,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
             items(images) { imageLink ->
                 AsyncImage(
