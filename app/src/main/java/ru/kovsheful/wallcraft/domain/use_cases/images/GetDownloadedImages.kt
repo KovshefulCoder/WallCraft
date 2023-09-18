@@ -1,13 +1,13 @@
-package ru.kovsheful.wallcraft.domain.use_cases
+package ru.kovsheful.wallcraft.domain.use_cases.images
 
 import ru.kovsheful.wallcraft.domain.models.ImageModel
 import ru.kovsheful.wallcraft.domain.repository.ImageRepository
 import javax.inject.Inject
 
-class DownloadImageByUrl @Inject constructor(
+class GetDownloadedImages @Inject constructor(
     private val imageRepository: ImageRepository
 ) {
-    suspend operator fun invoke(image: ImageModel) {
-        return imageRepository.downloadImageFromUrl(image)
+    suspend operator fun invoke(): List<String> {
+        return imageRepository.getDownloadedImages()
     }
 }

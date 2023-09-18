@@ -7,4 +7,6 @@ interface ImageRepository {
     suspend fun downloadImageFromUrl(image: ImageModel)
     suspend fun addImageToFavorites(image: ImageModel)
     suspend fun setImageAsWallpaper(image: ImageModel, wallpaperType: Int)
+    suspend fun getDownloadedImages(): List<String>
+    suspend fun getFavoriteImages(): List<String>
 }

@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.ImageAlreadyHaveThisStatus
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
-import ru.kovsheful.wallcraft.domain.models.ImageModel
-import ru.kovsheful.wallcraft.domain.use_cases.DownloadImageByUrl
-import ru.kovsheful.wallcraft.domain.use_cases.GetHighQualityImage
-import ru.kovsheful.wallcraft.domain.use_cases.SetImageAsWallpaper
+import ru.kovsheful.wallcraft.domain.use_cases.images.AddImageToFavorites
+import ru.kovsheful.wallcraft.domain.use_cases.images.DownloadImageByUrl
+import ru.kovsheful.wallcraft.domain.use_cases.images.GetHighQualityImage
+import ru.kovsheful.wallcraft.domain.use_cases.images.SetImageAsWallpaper
 import javax.inject.Inject
 
 
@@ -24,7 +24,8 @@ import javax.inject.Inject
 class FullScreenImageViewModel @Inject constructor(
     private val getHighQualityImage: GetHighQualityImage,
     private val setImageAsWallpaper: SetImageAsWallpaper,
-    private val downloadImageByUrl: DownloadImageByUrl
+    private val downloadImageByUrl: DownloadImageByUrl,
+    private val addImageToFavorites: AddImageToFavorites
 ) : ViewModel() {
     private val _state = MutableStateFlow(FullScreenImageState())
     val state = _state.asStateFlow()
@@ -57,7 +58,11 @@ class FullScreenImageViewModel @Inject constructor(
                         downloadImageByUrl(state.value.image)
                     }
                 }
-                else -> {}
+                is FullScreenImageEvent.OnAddToFavorites -> {
+                    sharedVMLogic {
+                        addImageToFavorites(state.value.image)
+                    }
+                }
             }
         }
     }

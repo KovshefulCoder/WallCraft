@@ -1,4 +1,4 @@
-package ru.kovsheful.wallcraft.domain.use_cases
+package ru.kovsheful.wallcraft.domain.use_cases.images
 
 import ru.kovsheful.wallcraft.domain.models.ImageModel
 import ru.kovsheful.wallcraft.domain.repository.ImageRepository

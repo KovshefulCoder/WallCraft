@@ -22,4 +22,5 @@
 
     <string name="settings_n_images_in_collection_title">Number of images in collection</string>
     <string name="settings_n_images_in_collection_description">\nSometimes there can be less photos</string>
+    <string name="filtered_images_screen_title_postfix">" images"</string>
 </resources>

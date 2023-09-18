@@ -218,7 +218,7 @@ fun WallCraftAdditionalScreenWithScaffold(
         Column(
             modifier = Modifier
                 .padding(it)
-                .padding(horizontal = 16.dp)
+                .padding(16.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally

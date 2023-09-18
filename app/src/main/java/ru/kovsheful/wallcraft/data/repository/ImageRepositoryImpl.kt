@@ -41,7 +41,7 @@ class ImageRepositoryImpl @Inject constructor(
     override suspend fun addImageToFavorites(image: ImageModel) {
         val downloadedImages = imagesDao.getDownloadedImages()
         if (downloadedImages.none { downloadedImg -> downloadedImg.id == image.id }) {
-            imagesDao.upsertImage(imageModelToImageEntity(image))
+            imagesDao.upsertImage(imageModelToImageEntity(image, isFavorite = true))
         } else {
             throw ImageAlreadyHaveThisStatus("Image already in favorites")
         }
@@ -52,10 +52,21 @@ class ImageRepositoryImpl @Inject constructor(
             imageWallpaperManager.setImageAsWallpaper(imageModelToImageEntity(image), wallpaperType)
         }
     }
+
+    override suspend fun getDownloadedImages(): List<String> =
+        imagesDao.getDownloadedImages().mapNotNull { image ->
+            image.localUri
+        }
+
+    override suspend fun getFavoriteImages(): List<String> =
+        imagesDao.getFavoriteImages().map { image ->
+            image.url
+        }
 }
 
-fun imageModelToImageEntity(imageModel: ImageModel) = ImageEntity(
+fun imageModelToImageEntity(imageModel: ImageModel, isFavorite: Boolean = false) = ImageEntity(
     id = imageModel.id,
     url = imageModel.url,
+    isFavorite = isFavorite,
     name = imageModel.name
 )

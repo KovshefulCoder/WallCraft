@@ -15,6 +15,9 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.kovsheful.wallcraft.core.Screens
 import ru.kovsheful.wallcraft.presentation.collectionImages.collectionImages
+import ru.kovsheful.wallcraft.presentation.filteredImages.DOWNLOADED
+import ru.kovsheful.wallcraft.presentation.filteredImages.FAVORITE
+import ru.kovsheful.wallcraft.presentation.filteredImages.filteredImages
 import ru.kovsheful.wallcraft.presentation.fullScreenImage.fullScreenImage
 import ru.kovsheful.wallcraft.presentation.home.home
 import ru.kovsheful.wallcraft.presentation.settings.navigateToSetting
@@ -57,8 +60,8 @@ fun WallCraftApp(
                 navController.navigate(Screens.CollectionImages.route + "/$id/$encodedTitle")
             },
             onSettings = { navController.navigateToSetting() },
-            onDownloads = {},
-            onFavorite = {},
+            onDownloads = { navController.navigate(Screens.FilteredImages.route + "/" + DOWNLOADED) },
+            onFavorite = { navController.navigate(Screens.FilteredImages.route + "/" +FAVORITE) }
         )
         collectionImages(
             navigateBack = { navController.popBackStack() },
@@ -66,12 +69,17 @@ fun WallCraftApp(
                 navController.navigate(Screens.FullScreenImage.route + "/$imageID")
             },
             onSettings = { navController.navigateToSetting() },
-            onDownloads = {},
-            onFavorite = {},
+            onDownloads = { navController.navigate(Screens.FilteredImages.route + "/" + DOWNLOADED) },
+            onFavorite = { navController.navigate(Screens.FilteredImages.route + "/" + FAVORITE) }
         )
         fullScreenImage(navigateBack = { navController.popBackStack() })
         settings(
             activity = activity,
+            navigateBack = {
+                navController.popBackStack()
+            }
+        )
+        filteredImages(
             navigateBack = {
                 navController.popBackStack()
             }

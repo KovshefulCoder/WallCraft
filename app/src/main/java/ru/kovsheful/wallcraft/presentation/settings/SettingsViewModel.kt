@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.kovsheful.wallcraft.core.SharedViewModelEvents
 import ru.kovsheful.wallcraft.domain.repository.SettingsType
-import ru.kovsheful.wallcraft.domain.use_cases.GetAppSettings
-import ru.kovsheful.wallcraft.domain.use_cases.UpdateAppSettings
+import ru.kovsheful.wallcraft.domain.use_cases.settings.GetAppSettings
+import ru.kovsheful.wallcraft.domain.use_cases.settings.UpdateAppSettings
 import javax.inject.Inject
 
 @HiltViewModel

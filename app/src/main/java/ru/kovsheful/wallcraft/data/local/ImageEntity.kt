@@ -12,10 +12,4 @@ data class ImageEntity(
     val name: String,
     val isFavorite: Boolean = false,
     val localUri: String? = null
-) {
-    fun toImageModel() = ImageModel(
-        id = id,
-        url = localUri ?: url, // if there are downloaded local version
-        name = name
-    )
-}
+)
