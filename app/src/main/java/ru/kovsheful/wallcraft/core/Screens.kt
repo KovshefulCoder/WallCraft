@@ -5,6 +5,5 @@ sealed class Screens(val route: String) {
     data object CollectionImages: Screens("Collection")
     data object FullScreenImage: Screens("FullScreenImage")
     data object Settings : Screens("Settings")
-    data object Favorite: Screens("Favorite")
-    data object Downloaded: Screens("Downloaded")
+    data object FilteredImages: Screens("FilteredImages")
 }

@@ -14,6 +14,7 @@ import androidx.documentfile.provider.DocumentFile
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.kovsheful.wallcraft.core.ErrorWhileSetWallpaper
 import ru.kovsheful.wallcraft.core.SmthWentWrongWhileSetWallpaper
+import ru.kovsheful.wallcraft.data.local.ImageEntity
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
@@ -26,11 +27,25 @@ class ImageWallpaperManager @Inject constructor(
     private val wallpaperManager = WallpaperManager.getInstance(context)
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    fun setImageAsWallpaper(imageUrl: String, wallpaperType: Int = 0) {
+    fun setImageAsWallpaper(image: ImageEntity, wallpaperType: Int) {
         try {
-            val request = DownloadManager.Request(imageUrl.toUri())
+            if (image.localUri != null) {
+                val inputStream = context.contentResolver.openInputStream(image.localUri.toUri())
+                when (wallpaperType) {
+                    0 -> wallpaperManager.setStream(inputStream)
+                    else -> {
+                        wallpaperManager.setStream(
+                            inputStream,
+                            null,
+                            true,
+                            wallpaperType
+                        )
+                    }
+                }
+                return
+            }
+            val request = DownloadManager.Request(image.url.toUri())
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
-                .setTitle("")
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "wallpaper.jpg")
             val imageID = downloadManager.enqueue(request)
             val receiver = object : BroadcastReceiver() {
