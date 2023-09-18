@@ -35,6 +35,12 @@ This application lets users sift through different image categories, select a pr
 <details>
 <summary> <h2> Video demonstration </h2> </summary>
 
+https://github.com/KovshefulCoder/WallCraft/assets/84292117/ce62358d-77b6-404f-8312-7791885d430a
+
+https://github.com/KovshefulCoder/WallCraft/assets/84292117/2595fbc2-0e2a-481d-a4af-6d18cf458c4a
+
+https://github.com/KovshefulCoder/WallCraft/assets/84292117/49747491-378c-4f50-a0d9-62a9d7506ed9
+
 </details>
 
 ## Tech stack
